@@ -71,6 +71,7 @@ th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var
 th { font: 500 .72rem/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 td.n, th.n { text-align: right; white-space: nowrap; }
 tr.best td { color: var(--heat); }
+td.best { color: var(--heat); font-weight: 600; }
 .stage { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
 .stage:first-of-type { border-top: 1px solid var(--line); }
 .stage .s { font: 500 .8rem/1.6 var(--mono); color: var(--muted); }
@@ -100,15 +101,16 @@ body{margin:0}
 <body>
 <div class="wrap">
 <header>
-  <span class="label">Critical Mass: Powerworks · version 1.9.0 · 24 November 2026</span>
+  <span class="label">Critical Mass: Powerworks · version 1.9.1 · 25 November 2026</span>
   <h1>What's new in 1.9</h1>
   <p class="lede">Four new systems for running a nuclear plant: reactor operating modes, a five-stage development programme, one research network across every floor, and automatic reactor control. Everything below is in the game now.</p>
   <div class="facts">
     <span class="fact"><b>4</b> new systems</span>
-    <span class="fact"><b>467</b> automated checks, all passing</span>
+    <span class="fact"><b>482</b> automated checks, all passing</span>
     <span class="fact">older saves load</span>
   </div>
   <a class="play" href="./">Play 1.9 in the browser <span>opens the game</span></a>
+  <div class="note"><b>Changed in 1.9.1, after a balance check:</b> High output now makes ×1.40 heat (was ×1.25), so each mode is best somewhere; automatic exports go up to 30, 75 and 160 E/s (were 18, 36 and 68); Advanced reactor engineering and Commercial reactor design take 480 s and 600 s (were 720 s and 900 s). Older saves load as before.</div>
 </header>
 
 <nav aria-label="Contents">
@@ -130,9 +132,9 @@ body{margin:0}
   <p class="where">Where: click any reactor, then OPERATING MODE in its panel.</p>
   <p>Every reactor now runs in one of three modes. The mode is separate from the power slider: power says how hard the reactor is pushed, the mode says how it trades electricity against heat.</p>
   <div class="cols three">
-    <div class="mode eco"><b>Economy</b><span class="mono">×0.85 electricity · ×0.70 heat</span><span>Less output, much cooler. Stable operation with little or no cooling.</span></div>
-    <div class="mode std"><b>Standard</b><span class="mono">×1 electricity · ×1 heat</span><span>Exactly how reactors worked before 1.9.</span></div>
-    <div class="mode high"><b>High output</b><span class="mono">×1.15 electricity · ×1.25 heat</span><span>More output at the cost of much more heat.</span></div>
+    <div class="mode eco"><b>Economy</b><span class="mono">×0.85 electricity · ×0.70 heat</span><span>Less output, much cooler. The best choice with no cooling, and the safest.</span></div>
+    <div class="mode std"><b>Standard</b><span class="mono">×1 electricity · ×1 heat</span><span>The best choice with one cooling tower. Exactly how reactors worked before 1.9.</span></div>
+    <div class="mode high"><b>High output</b><span class="mono">×1.15 electricity · ×1.40 heat</span><span>More output at the cost of much more heat. Worth it with heavy cooling.</span></div>
   </div>
 
   <h3>How heat works with a mode</h3>
@@ -146,27 +148,29 @@ body{margin:0}
 
   <figure>
     <div class="scroll"><svg id="heat-chart" viewBox="0 0 680 300" width="100%" role="img" aria-label="Resting temperature against power level for the three modes, with no cooling"></svg></div>
-    <figcaption>Where each mode settles with no cooling, from 25% to 150% power. Economy never leaves the safe side, even at 150% (83°). Standard reaches 100° and shuts down above about 141%. High output does so above about 126%.</figcaption>
+    <figcaption>Where each mode settles with no cooling, from 25% to 150% power. Economy never leaves the safe side, even at 150% (83°). Standard reaches 100° and shuts down above about 141%. High output does so above about 119%.</figcaption>
   </figure>
 
   <h3>Worked example</h3>
-  <p>One experimental reactor, no cooling tower, High output at 120% power. It settles at 20 + 40 × 1.44 × 1.25 = <span class="mono">92°</span>, which is Overheating and runs at <span class="mono">80%</span> efficiency. Output: 1.38 × 0.80 = <span class="mono">×1.10</span> of normal. Dropping to 115% lets it settle at 86° and gives <span class="mono">×1.22</span>, the best High output can do without cooling.</p>
+  <p>A small commercial reactor with one MK-I cooling tower (15° of cooling). In Standard at 140% it settles at 20 + 40 × 1.96 − 15 = <span class="mono">83°</span>, runs at <span class="mono">95%</span> efficiency and makes <span class="mono">×1.33</span> of normal. In High output the best it can do with the same tower is 120%: it settles at 20 + 40 × 1.44 × 1.40 − 15 = <span class="mono">86°</span>, just into Overheating, at 94% efficiency, for <span class="mono">×1.29</span>. With one tower, Standard wins. Without any cooling, High output at 120% would settle at 101° and shut down.</p>
 
   <h3>Which mode is best? (balance check)</h3>
-  <p>The best power level for one reactor with at most one cooling tower, found in 5% steps without ever shutting down. Figures are output as a multiple of the reactor's normal rate.</p>
+  <p>The best power level for a small commercial reactor, found in 5% steps without ever shutting down, after the towers' own electricity. Figures are output as a multiple of the reactor's normal rate; every other reactor comes out within a few hundredths of these.</p>
   <div class="scroll"><table>
     <thead><tr><th>Cooling</th><th class="n">Economy</th><th class="n">Standard</th><th class="n">High output</th></tr></thead>
     <tbody>
-      <tr><td>None</td><td class="n">1.216 at 150%</td><td class="n">1.194 at 125%</td><td class="n">1.224 at 115%</td></tr>
-      <tr><td>Cooling tower MK-I</td><td class="n">1.275 at 150%</td><td class="n">1.333 at 140%</td><td class="n">1.370 at 125%</td></tr>
-      <tr><td>Cooling tower MK-II</td><td class="n">1.275 at 150%</td><td class="n">1.425 at 150%</td><td class="n">1.444 at 130%</td></tr>
-      <tr><td>Cooling tower MK-III</td><td class="n">1.275 at 150%</td><td class="n">1.500 at 150%</td><td class="n">1.580 at 145%</td></tr>
+      <tr class="best-row"><td>None</td><td class="n best">1.216 at 150%</td><td class="n">1.194 at 125%</td><td class="n">1.157 at 105%</td></tr>
+      <tr><td>Cooling tower MK-I</td><td class="n">1.256 at 150%</td><td class="n best">1.314 at 140%</td><td class="n">1.273 at 120%</td></tr>
+      <tr><td>Cooling tower MK-II</td><td class="n">1.237 at 150%</td><td class="n best">1.387 at 150%</td><td class="n">1.336 at 125%</td></tr>
+      <tr><td>Cooling tower MK-III</td><td class="n">1.200 at 150%</td><td class="n best">1.425 at 150%</td><td class="n">1.410 at 135%</td></tr>
+      <tr><td>Two MK-III towers</td><td class="n">1.124 at 150%</td><td class="n">1.349 at 150%</td><td class="n best">1.470 at 145%</td></tr>
     </tbody>
   </table></div>
   <ul>
-    <li><b>Economy</b> is the safe choice: it can sit at 150% forever and never risk a shutdown, and it is the best choice if a reactor must stay at or under 70° (full efficiency).</li>
-    <li><b>High output</b> gets the most out of good cooling.</li>
-    <li><b>Standard</b> is never the single best, by 0.5% to 5%. Output grows with power but heat grows with its square, so High output at a slightly lower power always edges it out. This is flagged as a balance question; the multipliers were left exactly as specified.</li>
+    <li><b>Economy</b> is best with no cooling, and the safest: it can sit at 150% forever without a shutdown, even if its towers lose power.</li>
+    <li><b>Standard</b> is best with one cooling tower of any level.</li>
+    <li><b>High output</b> is best only with heavy cooling, such as two MK-III towers. Without cooling it shuts down above about 119%.</li>
+    <li>Why it works out this way: at the same temperature, output is in proportion to the mode's electricity divided by the square root of its heat. That comes to Economy 1.016, Standard 1.000 and High output 0.972, so High output pays for its extra electricity, and Economy only loses when it hits the 150% limit.</li>
   </ul>
 </section>
 
@@ -307,11 +311,11 @@ body{margin:0}
 <section id="tested">
   <h2>How it was tested</h2>
   <p>Each system was built, tested and saved separately, one after another, then all four were checked together.</p>
-  <h3>Automated checks: 467 of 467 passing</h3>
+  <h3>Automated checks: 482 of 482 passing</h3>
   <p>These cover the rules, saving and loading, old-save migration, and the combinations above, including eight hours away on three floors with every reactor in High output with a tower and a controller: none shut down, all ended at or under target.</p>
   <h3>Clicked through in a real browser</h3>
   <ul>
-    <li>Switching a reactor to High output raised it from 23.30 to 26.79 E/s.</li>
+    <li>Switching a reactor to High output raised it from 23.30 to 26.79 E/s (in 1.9.0, before High output ran hotter).</li>
     <li>Stages 1 and 2 played on a new save with real clicks. Stage 1 paid exactly ϟ100 and did not count as sales; Stage 2 gave exactly +5%; a second claim did nothing.</li>
     <li>The research panel on a three-floor plant: Corran's labs ran at 5.21 against Seren's 2.99, as the local bonuses say they should.</li>
     <li>A controller fitted for ϟ7,100 held a target of 65° at 105% power, settling at 61.9°. Moving the slider switched it to Manual and left the other reactors alone.</li>
@@ -323,7 +327,8 @@ body{margin:0}
 <section id="issues">
   <h2>Known issues and what hasn't been tested</h2>
   <ul>
-    <li>Standard mode is never the single best choice (see the table in section 1). Reported, not changed.</li>
+    <li>In 1.9.0 Standard mode was never the single best choice. A balance check found it, and 1.9.1 fixed it by making High output run hotter (section 1).</li>
+    <li>Older saves with a reactor left in High output at a power that now shuts it down have that reactor stepped down once, on loading, to the highest power that settles no hotter than before.</li>
     <li>The top bar overflows on narrow screens once the Legacy button appears. This was already there before 1.9.</li>
     <li>Nobody has yet played from an empty plant all the way through Stages 3 to 5; those were checked with tests and the ready-made plants.</li>
     <li>Not tried on a phone.</li>
@@ -342,7 +347,7 @@ body{margin:0}
   const L = 48, R = 548, T = 16, B = 262;
   const x = p => L + (p - 0.25) / 1.25 * (R - L);
   const y = t => B - (t - 20) / 120 * (B - T);
-  const modes = [['Economy', 0.70, 'var(--cool)'], ['Standard', 1, 'var(--muted)'], ['High output', 1.25, 'var(--heat)']];
+  const modes = [['Economy', 0.70, 'var(--cool)'], ['Standard', 1, 'var(--muted)'], ['High output', 1.40, 'var(--heat)']];
   let out = '';
   // Temperature bands: Stable under 70, Hot 70 to 84, Overheating 85 to 99, shutdown at 100.
   const bands = [[70, 85, 'var(--warn)', 'HOT'], [85, 100, 'var(--heat)', 'OVERHEATING'], [100, 140, 'var(--bad)', 'SHUTDOWN']];

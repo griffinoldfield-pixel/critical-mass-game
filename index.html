@@ -509,7 +509,7 @@ a.action { display: inline-flex; align-items: center; justify-content: center; t
 </style>
 
 </head>
-<body>
+<body><script>window.CRITICAL_MASS_GUIDE = 'whats-new.html';</script>
 <main id="game" aria-label="Critical Mass power plant">
   <canvas id="world" aria-label="Isometric plant. Drag empty ground to pan. Hold and drag a building to move it. Scroll to zoom. Use the map controls for keyboard navigation."></canvas>
   <div class="world-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -768,7 +768,7 @@ const ECONOMY = {
       text: 'Reduces electricity production and heat generation, allowing more stable operation with less cooling infrastructure.'},
     standard: {name: 'Standard', output: 1, heat: 1,
       text: 'Balanced operation with standard electricity output and thermal performance.'},
-    high: {name: 'High output', output: 1.15, heat: 1.25,
+    high: {name: 'High output', output: 1.15, heat: 1.40,
       text: 'Increases electricity generation at the cost of substantially higher heat production.'}
   }
 };
@@ -781,8 +781,8 @@ const TECH = {
   optimization: {branch: 0, col: 3, name: 'Energy optimisation', flux: 310000, time: 2700, pre: ['reactor2', 'computation', 'gridSync'], boost: {output: 1.10}, effect: '+10% electricity from all generators and timed experiments.'},
 
   physics: {branch: 1, col: 0, name: 'Nuclear physics', flux: 1700, time: 240, pre: ['efficiency', 'coolant'], effect: 'Unlocks the four-tile experimental reactor.'},
-  reactor2: {branch: 1, col: 1, name: 'Advanced reactor engineering', flux: 5700, time: 720, pre: ['physics', 'industry'], effect: 'Unlocks the experimental MK-II upgrade and a second experimental reactor slot.'},
-  commercial: {branch: 1, col: 2, name: 'Commercial reactor design', flux: 12800, time: 900, pre: ['reactor2', 'containment', 'distribution'], effect: 'Unlocks the small commercial reactor after you install an experimental reactor.'},
+  reactor2: {branch: 1, col: 1, name: 'Advanced reactor engineering', flux: 5700, time: 480, pre: ['physics', 'industry'], effect: 'Unlocks the experimental MK-II upgrade and a second experimental reactor slot.'},
+  commercial: {branch: 1, col: 2, name: 'Commercial reactor design', flux: 12800, time: 600, pre: ['reactor2', 'containment', 'distribution'], effect: 'Unlocks the small commercial reactor after you install an experimental reactor.'},
   largeReactors: {branch: 1, col: 3, name: 'Large reactor design', flux: 155000, time: 1800, pre: ['commercial', 'coolingTowers', 'metallurgy', 'advancedStorage', 'gridSync'], effect: 'Unlocks the nine-tile large commercial reactor after you install a small commercial reactor.'},
   advancedReactors: {branch: 1, col: 4, name: 'Advanced reactor design', flux: 990000, time: 5400, pre: ['largeReactors', 'thermalRecirc', 'gridScaleStorage', 'optimization', 'plantTelemetry', 'interconnect'], effect: 'Unlocks the advanced nuclear reactor after you install a large commercial reactor.'},
 
@@ -808,13 +808,13 @@ const TECH = {
   computation: {branch: 5, col: 3, name: 'Advanced computation', flux: 124000, time: 1900, pre: ['labEfficiency', 'advancedStorage'], boost: {research: 1.25}, effect: '+25% research speed, two extra lab slots, and a computing rack upgrade.'},
 
   analysis: {branch: 6, col: 0, name: 'Market analysis', flux: 520, time: 90, pre: [], boost: {sales: 1.08}, effect: '+8% sale value. Unlocks trading terminals.'},
-  distribution: {branch: 6, col: 1, name: 'Advanced distribution', flux: 9200, time: 610, pre: ['selling'], boost: {sales: 1.08}, exportRate: 68, effect: '+8% sale value and automatic exports up to 68 E/s. Unlocks bulk terminals.'},
+  distribution: {branch: 6, col: 1, name: 'Advanced distribution', flux: 9200, time: 610, pre: ['selling'], boost: {sales: 1.08}, exportRate: 160, effect: '+8% sale value and automatic exports up to 160 E/s. Unlocks bulk terminals.'},
   economics: {branch: 6, col: 2, name: 'Industrial economics', flux: 64000, time: 1080, pre: ['distribution', 'commercial'], boost: {sales: 1.08}, effect: '+8% sale value from manual and automatic orders.'},
   bulkContracts: {branch: 6, col: 3, name: 'Bulk power contracts', flux: 240000, time: 2050, pre: ['economics', 'gridSync'], exportRate: 850, effect: 'Raises the automatic export limit to 850 E/s.'},
 
-  selling: {branch: 7, col: 0, name: 'Automated selling', flux: 880, time: 105, pre: ['analysis'], exportRate: 18, effect: 'Upgrades standing orders to full market price and exports up to 18 E/s.'},
+  selling: {branch: 7, col: 0, name: 'Automated selling', flux: 880, time: 105, pre: ['analysis'], exportRate: 30, effect: 'Upgrades standing orders to full market price and exports up to 30 E/s.'},
   efficiency: {branch: 7, col: 1, name: 'Automated efficiency', flux: 720, time: 145, pre: ['atomic'], boost: {auto: 1.10}, effect: '+10% automatic splitter output. Unlocks the advanced splitter upgrade.'},
-  dispatchControl: {branch: 7, col: 2, name: 'Dispatch control', flux: 4650, time: 350, pre: ['selling', 'loadBalancing'], exportRate: 36, effect: 'Raises the automatic export limit to 36 E/s before commercial distribution.'},
+  dispatchControl: {branch: 7, col: 2, name: 'Dispatch control', flux: 4650, time: 350, pre: ['selling', 'loadBalancing'], exportRate: 75, effect: 'Raises the automatic export limit to 75 E/s before commercial distribution.'},
   plantTelemetry: {branch: 7, col: 3, name: 'Plant telemetry', flux: 310000, time: 2700, pre: ['dispatchControl', 'metallurgy', 'computation'], boost: {auto: 1.10}, effect: '+10% automatic splitter output and two additional splitter slots. Required for the advanced reactor.'},
 
   marine: {branch: 8, col: 0, name: 'Offshore engineering', flux: 60000, time: 1100, pre: ['commercial'], effect: 'Opens Seren Atoll, a second plant floor with its own machines. Unlocks the tidal turbine and the seawater cooling loop there.'},
@@ -1910,7 +1910,7 @@ function serializeGame(game, indent) {
     worlds[id] = {energy, time, nextId, lastAutoSale, splitCount, buildings, discovered, autoSell};
   }
   return JSON.stringify({
-    version: 3, current: game.current, flux: game.bank.flux, earned: game.bank.earned, done: game.done,
+    version: 3, balance: SAVE_BALANCE, current: game.current, flux: game.bank.flux, earned: game.bank.earned, done: game.done,
     legacy: game.legacy, library: game.library, settings: game.settings, discoveries: game.discoveries, ventures: game.ventures,
     programme: game.programme, research: game.projects, worlds, savedAt: Date.now()
   }, null, indent);
@@ -1920,6 +1920,31 @@ const LEGACY_RESEARCH_TIME = {
   batteries: 22, industry: 47, labEfficiency: 69, advancedStorage: 115, computation: 265,
   analysis: 20, selling: 38, distribution: 100, economics: 190
 };
+/* Research times shortened since saves were made, with the time they had
+   before (1.9.1). A project saved with more time left than its new duration
+   loads with the new duration left, so it never takes longer than it would
+   have; anything past the old duration is still a bad save. */
+const SHORTENED_RESEARCH = {reactor2: 720, commercial: 900};
+/* Which balance rules a save was made under: 1 since 1.9.1. A save without
+   it is older, made when High output's heat was ×1.25 instead of ×1.40. */
+const SAVE_BALANCE = 1, OLD_HIGH_HEAT = 1.25;
+/* A reactor left in High output in an older save at a power that now settles
+   at the shutdown temperature would shut down while the time away is worked
+   out. It is stepped down to the highest power that settles no hotter than
+   it did before. Nothing else is changed, and newer saves are left alone. */
+function easeOldHighOutput(game) {
+  const heat = ECONOMY.reactorHeat;
+  for (const floor of Object.values(game.worlds)) for (const r of floor.buildings) {
+    if (!isReactor(r.type) || r.shutdown || reactorMode(r) !== ECONOMY.reactorModes.high) continue;
+    if (reactorTargetHeat(floor, r) < heat.shutdown) continue;
+    const cooling = reactorCooling(floor, r), factor = technologyFactor(floor, 'heat');
+    const before = Math.max(heat.ambient, reactorRestingHeat(r.power ?? 1, factor * OLD_HIGH_HEAT) - cooling);
+    while (r.power > heat.minPower + 1e-9 && reactorTargetHeat(floor, r) > Math.min(before, heat.shutdown - 1e-6)) {
+      setReactorPower(r, r.power - heat.powerStep);
+    }
+  }
+}
+const savedResearchLimit = key => Math.max(TECH[key].time, SHORTENED_RESEARCH[key] ?? 0);
 const validQuantity = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value < 1e16;
 function badSave() { throw new Error('This file is not a valid Critical Mass save.'); }
 /* Reads a save of any version. Versions 1 and 2 were a single floor with its
@@ -1991,12 +2016,13 @@ function parseGame(raw) {
   const projects = [];
   const add = project => {
     const same = projects.find(p => p.key === project.key);
-    if (!same) projects.push({key: project.key, remaining: project.remaining});
-    else same.remaining = Math.min(same.remaining, project.remaining);
+    const remaining = Math.min(project.remaining, TECH[project.key].time);
+    if (!same) projects.push({key: project.key, remaining});
+    else same.remaining = Math.min(same.remaining, remaining);
   };
   if (Array.isArray(saved.research)) {
     for (const p of saved.research) {
-      if (!p || !Object.hasOwn(TECH, p.key) || !validQuantity(p.remaining) || p.remaining <= 0 || p.remaining > TECH[p.key].time ||
+      if (!p || !Object.hasOwn(TECH, p.key) || !validQuantity(p.remaining) || p.remaining <= 0 || p.remaining > savedResearchLimit(p.key) ||
         game.done.includes(p.key)) badSave();
       add(p);
     }
@@ -2005,6 +2031,7 @@ function parseGame(raw) {
   game.projects = projects.filter(p => !game.done.includes(p.key));
   // Last, with every floor linked, so the bonuses it reads are the real ones.
   linkGame(game);
+  if (saved.balance !== SAVE_BALANCE) easeOldHighOutput(game);
   parseProgramme(game, saved.version === 3 ? saved.programme : undefined);
   return linkGame(game);
 }
@@ -2120,7 +2147,8 @@ function parseWorld(saved, id, doneList, version) {
     const legacyTime = Object.hasOwn(LEGACY_RESEARCH_TIME, key) ? LEGACY_RESEARCH_TIME[key] : null;
     const tech = Object.hasOwn(TECH, key) ? TECH[key] : null;
     const duration = version === 1 && legacyTime ? legacyTime : tech?.time;
-    if (!tech || !validQuantity(remaining) || remaining <= 0 || remaining > duration || done(result, key) ||
+    const limit = tech && duration === tech.time ? savedResearchLimit(key) : duration;
+    if (!tech || !validQuantity(remaining) || remaining <= 0 || remaining > limit || done(result, key) ||
       (!legacyTime && researchStatus(result, key) !== 'available')) bad();
     result.projects.push({key, remaining: duration === tech.time ? remaining : remaining / duration * tech.time});
   }
@@ -3905,6 +3933,8 @@ const viewing = STAGES.find(stage => stage === stageAsked()) || '';
 addEventListener('hashchange', () => { if ((STAGES.find(stage => stage === stageAsked()) || '') !== viewing) location.reload(); });
 /* The web version runs in a frame that cannot download files. */
 const onWeb = window.CRITICAL_MASS_WEB === true;
+/* The copies built for the web sit beside a page on what is new; the plain file does not. */
+const guideLink = typeof window.CRITICAL_MASS_GUIDE === 'string' ? window.CRITICAL_MASS_GUIDE : '';
 const stageLink = stage => '#stage-' + stage;
 const myPlantLink = () => location.search ? location.pathname + '#plant' : '#plant';
 if (viewing) game = buildStage(viewing);
@@ -5046,6 +5076,8 @@ function renderSettings() {
     (resetting ? '<p>Confirming replaces this browser’s current plant.</p>' : '') +
     '<hr><span class="section-label">LOOK AT A PLANT</span><p>A ready-made plant at three points in the game. Your own is not touched.</p>' +
     '<div class="settings-row">' + STAGES.map(stage => '<a class="action alt" href="' + stageLink(stage) + '">' + stage[0].toUpperCase() + stage.slice(1) + '</a>').join('') + '</div>' +
+    (guideLink ? '<hr><span class="section-label">WHAT’S NEW</span><p>Everything added in version 1.9, explained.</p>' +
+      '<div class="settings-row"><a class="action alt" href="' + guideLink + '">What’s new in 1.9</a></div>' : '') +
     '<hr><span class="section-label">LOCATE ON MAP</span><div class="map-index">' +
     [...buttons.values()].map(b => action(MACHINES[b.type].tag, 'find-' + b.id, {type: 'alt'})).join('') + '</div></div>';
   $('volume').addEventListener('input', e => { state.settings.volume = Number(e.target.value); });
