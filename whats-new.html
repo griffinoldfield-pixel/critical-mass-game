@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Powerworks 1.9</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a control-room manual. One reading column, numbered panels for the four systems
+   (built in that order), data set in mono like plant readouts, heat in amber, cooling in teal. */
+:root {
+  --bg: #f2f4ee; --panel: #fbfcf8; --fg: #1a231f; --muted: #5a6760; --line: #d3dacf;
+  --heat: #b8621a; --cool: #23707e; --good: #3b7f4a; --warn: #b08a14; --bad: #b23b2e;
+  --chip: #e6ebe1;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111613; --panel: #171e1a; --fg: #e3e9e3; --muted: #9aa79f; --line: #2c3631;
+  --heat: #e59446; --cool: #5fb3c1; --good: #73bb82; --warn: #d6b44a; --bad: #e27365; --chip: #222b26; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111613; --panel: #171e1a; --fg: #e3e9e3; --muted: #9aa79f; --line: #2c3631;
+  --heat: #e59446; --cool: #5fb3c1; --good: #73bb82; --warn: #d6b44a; --bad: #e27365; --chip: #222b26; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--body); }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 40px; }
+a { color: var(--cool); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--heat); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2.2rem, 6vw, 3.4rem); font-weight: 800; letter-spacing: -.01em; }
+h2 { font-size: 1.7rem; font-weight: 800; }
+h3 { font-size: 1.1rem; font-weight: 700; margin-top: 8px; }
+p { margin: 0; max-width: 68ch; }
+.label { font: 500 .74rem/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.mono, td.n, th.n { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 68ch; }
+
+/* Opening */
+header { display: grid; gap: 16px; }
+.lede { font-size: 1.1rem; color: var(--muted); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; }
+.fact { font: 500 .82rem/1 var(--mono); background: var(--chip); border-radius: 4px; padding: 8px 10px; }
+.fact b { color: var(--heat); font-weight: 500; }
+.play { display: inline-flex; align-items: center; gap: 10px; width: fit-content; background: var(--fg); color: var(--bg);
+  font: 600 1rem/1 var(--body); text-decoration: none; padding: 13px 18px; border-radius: 6px; }
+.play span { font-family: var(--mono); font-size: .8rem; opacity: .7; }
+
+nav ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 4px 24px; }
+nav a { display: flex; gap: 10px; padding: 5px 0; color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--line); }
+nav a:hover { color: var(--cool); }
+nav a i { font: normal .8rem/1.9 var(--mono); color: var(--muted); min-width: 1.6em; }
+
+/* Sections */
+section { display: grid; gap: 16px; scroll-margin-top: 16px; }
+.system { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 28px clamp(16px, 4vw, 32px); }
+.head { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+.num { font: 500 .9rem/1 var(--mono); color: var(--bg); background: var(--heat); border-radius: 4px; padding: 5px 7px; }
+.where { font-size: .92rem; color: var(--muted); }
+.note { border-left: 3px solid var(--warn); padding: 4px 0 4px 14px; color: var(--muted); font-size: .95rem; max-width: 68ch; }
+
+/* Tables */
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 .72rem/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+td.n, th.n { text-align: right; white-space: nowrap; }
+tr.best td { color: var(--heat); }
+.stage { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.stage:first-of-type { border-top: 1px solid var(--line); }
+.stage .s { font: 500 .8rem/1.6 var(--mono); color: var(--muted); }
+.stage h3 { margin: 0; }
+.stage ul { grid-column: 2; }
+.reward { grid-column: 2; font: 500 .85rem/1.4 var(--mono); color: var(--good); }
+.scope { font: .75rem/1 var(--mono); color: var(--muted); background: var(--chip); padding: 3px 6px; border-radius: 3px; white-space: nowrap; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { font: 500 .8rem/1 var(--mono); padding: 6px 9px; border-radius: 999px; border: 1px solid var(--line); }
+
+/* Chart */
+figure { margin: 0; display: grid; gap: 8px; }
+figcaption { font-size: .88rem; color: var(--muted); max-width: 68ch; }
+svg text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px 32px; }
+.cols > * { min-width: 0; }
+.cols.three { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px 24px; }
+.mode { display: grid; gap: 4px; padding-top: 10px; border-top: 3px solid var(--line); }
+.mode.eco { border-color: var(--cool); } .mode.std { border-color: var(--muted); } .mode.high { border-color: var(--heat); }
+.mode b { font-family: var(--display); font-size: 1.05rem; }
+footer { color: var(--muted); font-size: .9rem; display: grid; gap: 10px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body{margin:0}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="label">Critical Mass: Powerworks · version 1.9.0 · 24 November 2026</span>
+  <h1>What's new in 1.9</h1>
+  <p class="lede">Four new systems for running a nuclear plant: reactor operating modes, a five-stage development programme, one research network across every floor, and automatic reactor control. Everything below is in the game now.</p>
+  <div class="facts">
+    <span class="fact"><b>4</b> new systems</span>
+    <span class="fact"><b>467</b> automated checks, all passing</span>
+    <span class="fact">older saves load</span>
+  </div>
+  <a class="play" href="./">Play 1.9 in the browser <span>opens the game</span></a>
+</header>
+
+<nav aria-label="Contents">
+  <ol>
+    <li><a href="#modes"><i>1</i>Reactor operating modes</a></li>
+    <li><a href="#programme"><i>2</i>Scientific Development Programme</a></li>
+    <li><a href="#network"><i>3</i>Unified research network</a></li>
+    <li><a href="#control"><i>4</i>Automatic reactor control</a></li>
+    <li><a href="#together"><i>·</i>How they work together</a></li>
+    <li><a href="#saves"><i>·</i>Older saves</a></li>
+    <li><a href="#tested"><i>·</i>How it was tested</a></li>
+    <li><a href="#issues"><i>·</i>Known issues</a></li>
+  </ol>
+</nav>
+
+<!-- 1 -->
+<section id="modes" class="system">
+  <div class="head"><span class="num">1</span><h2>Reactor operating modes</h2></div>
+  <p class="where">Where: click any reactor, then OPERATING MODE in its panel.</p>
+  <p>Every reactor now runs in one of three modes. The mode is separate from the power slider: power says how hard the reactor is pushed, the mode says how it trades electricity against heat.</p>
+  <div class="cols three">
+    <div class="mode eco"><b>Economy</b><span class="mono">×0.85 electricity · ×0.70 heat</span><span>Less output, much cooler. Stable operation with little or no cooling.</span></div>
+    <div class="mode std"><b>Standard</b><span class="mono">×1 electricity · ×1 heat</span><span>Exactly how reactors worked before 1.9.</span></div>
+    <div class="mode high"><b>High output</b><span class="mono">×1.15 electricity · ×1.25 heat</span><span>More output at the cost of much more heat.</span></div>
+  </div>
+
+  <h3>How heat works with a mode</h3>
+  <ul>
+    <li>A reactor drifts towards a resting temperature over about 40 seconds: <span class="mono">20 + 40 × power² × mode heat</span>, then minus cooling. The mode only changes the heat the reactor makes, never the 20° it starts from.</li>
+    <li>Output is <span class="mono">base × power × mode electricity × efficiency</span>. So 120% power in High output gives base × 1.20 × 1.15 = ×1.38 before temperature.</li>
+    <li>Temperature still costs output: full efficiency up to 70°, 95% at 84° and 85°, 65% at 99°, in straight lines between. At 100° the reactor shuts down and makes nothing until it cools below 60° and you restart it.</li>
+    <li>Each reactor keeps its own mode, and the mode is saved. New reactors start in Standard.</li>
+    <li>The panel shows the mode's description, its electricity and heat multipliers, where the temperature will settle, and the efficiency right now.</li>
+  </ul>
+
+  <figure>
+    <div class="scroll"><svg id="heat-chart" viewBox="0 0 680 300" width="100%" role="img" aria-label="Resting temperature against power level for the three modes, with no cooling"></svg></div>
+    <figcaption>Where each mode settles with no cooling, from 25% to 150% power. Economy never leaves the safe side, even at 150% (83°). Standard reaches 100° and shuts down above about 141%. High output does so above about 126%.</figcaption>
+  </figure>
+
+  <h3>Worked example</h3>
+  <p>One experimental reactor, no cooling tower, High output at 120% power. It settles at 20 + 40 × 1.44 × 1.25 = <span class="mono">92°</span>, which is Overheating and runs at <span class="mono">80%</span> efficiency. Output: 1.38 × 0.80 = <span class="mono">×1.10</span> of normal. Dropping to 115% lets it settle at 86° and gives <span class="mono">×1.22</span>, the best High output can do without cooling.</p>
+
+  <h3>Which mode is best? (balance check)</h3>
+  <p>The best power level for one reactor with at most one cooling tower, found in 5% steps without ever shutting down. Figures are output as a multiple of the reactor's normal rate.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Cooling</th><th class="n">Economy</th><th class="n">Standard</th><th class="n">High output</th></tr></thead>
+    <tbody>
+      <tr><td>None</td><td class="n">1.216 at 150%</td><td class="n">1.194 at 125%</td><td class="n">1.224 at 115%</td></tr>
+      <tr><td>Cooling tower MK-I</td><td class="n">1.275 at 150%</td><td class="n">1.333 at 140%</td><td class="n">1.370 at 125%</td></tr>
+      <tr><td>Cooling tower MK-II</td><td class="n">1.275 at 150%</td><td class="n">1.425 at 150%</td><td class="n">1.444 at 130%</td></tr>
+      <tr><td>Cooling tower MK-III</td><td class="n">1.275 at 150%</td><td class="n">1.500 at 150%</td><td class="n">1.580 at 145%</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><b>Economy</b> is the safe choice: it can sit at 150% forever and never risk a shutdown, and it is the best choice if a reactor must stay at or under 70° (full efficiency).</li>
+    <li><b>High output</b> gets the most out of good cooling.</li>
+    <li><b>Standard</b> is never the single best, by 0.5% to 5%. Output grows with power but heat grows with its square, so High output at a slightly lower power always edges it out. This is flagged as a balance question; the multipliers were left exactly as specified.</li>
+  </ul>
+</section>
+
+<!-- 2 -->
+<section id="programme" class="system">
+  <div class="head"><span class="num">2</span><h2>Scientific Development Programme</h2></div>
+  <p class="where">Where: the small tracker above Construct, bottom left. Click its title to open the programme; the − button folds the objective list away.</p>
+  <p>Five stages that guide a run from the first hand-split atom to a plant on several floors. Each stage has three objectives. When all three are ticked you press Complete and get that stage's reward, which lasts until you begin again with Scientific Legacy.</p>
+
+  <div>
+    <div class="stage"><span class="s">STAGE 1</span><h3>Atomic foundations</h3>
+      <ul><li>Complete 10 manual atom splits <span class="scope">this run</span></li><li>Generate 100 E <span class="scope">this run</span></li><li>Earn ϟ100 from electricity sales <span class="scope">this run</span></li></ul>
+      <span class="reward">Reward: ϟ100 development grant</span></div>
+    <div class="stage"><span class="s">STAGE 2</span><h3>Industrial automation</h3>
+      <ul><li>Own an automatic atom splitter <span class="scope">right now</span></li><li>Reach 10 E/s of production <span class="scope">once</span></li><li>Complete any two technologies <span class="scope">this run</span></li></ul>
+      <span class="reward">Reward: +5% electricity production</span></div>
+    <div class="stage"><span class="s">STAGE 3</span><h3>Experimental fission</h3>
+      <ul><li>Own an experimental nuclear reactor <span class="scope">right now</span></li><li>Generate 5,000 E during this stage <span class="scope">this stage</span></li><li>Run a reactor at 125% power or more for 60 s without a shutdown <span class="scope">this run</span></li></ul>
+      <span class="reward">Reward: +10% reactor electricity</span></div>
+    <div class="stage"><span class="s">STAGE 4</span><h3>Commercial nuclear power</h3>
+      <ul><li>Own a commercial nuclear reactor <span class="scope">right now</span></li><li>Reach 100 E/s of production <span class="scope">once</span></li><li>Run a cooling tower with a reactor in range <span class="scope">right now</span></li></ul>
+      <span class="reward">Reward: +10% research speed</span></div>
+    <div class="stage"><span class="s">STAGE 5</span><h3>Industrial expansion</h3>
+      <ul><li>Open a second plant floor <span class="scope">right now</span></li><li>Earn ϟ100,000 from sales <span class="scope">all runs</span></li><li>Complete five more technologies during this stage <span class="scope">this stage</span></li></ul>
+      <span class="reward">Reward: +10% electricity sale value</span></div>
+  </div>
+
+  <h3>What the tags mean</h3>
+  <div class="scroll"><table>
+    <tbody>
+      <tr><td><span class="scope">this run</span></td><td>Counted since the last Scientific Legacy, on every floor.</td></tr>
+      <tr><td><span class="scope">right now</span></td><td>True at this moment. Dismantle the machine and the tick goes away.</td></tr>
+      <tr><td><span class="scope">once</span></td><td>Production after cooling towers, over every floor. Once reached it stays ticked for that stage.</td></tr>
+      <tr><td><span class="scope">this stage</span></td><td>Counted from the moment the stage began.</td></tr>
+      <tr><td><span class="scope">all runs</span></td><td>Counted over the whole life of the save, Legacy or not.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The rules</h3>
+  <ul>
+    <li>Electricity counts when it is generated into storage. Sales count only real electricity sales; money from Experimental Ventures never counts.</li>
+    <li>The 125% objective tracks the longest unbroken spell this run with any reactor at 125% or more; a shutdown ends the spell.</li>
+    <li>Rewards are added once to the bonus sum, beside technologies, discoveries and Legacy. A stage can't be claimed twice.</li>
+    <li>The programme screen shows the strip of five stages, each objective with a progress bar and what it is counted over, the reward, what the next stage asks for, and every bonus active this run. The stage you just finished and its reward light up briefly.</li>
+    <li>Scientific Legacy starts the programme again at Stage 1 and removes its rewards, so they can be earned again. The best stage you ever completed is kept as a record only and gives nothing, so there is nothing to farm.</li>
+    <li>Every objective is reachable in order: Stage 2 can be done without a reactor (two Advanced auto splitters make 11.2 E/s), and no stage needs something that only unlocks in a later one. The targets were checked against the game's economy and none needed changing.</li>
+  </ul>
+</section>
+
+<!-- 3 -->
+<section id="network" class="system">
+  <div class="head"><span class="num">3</span><h2>Unified research network</h2></div>
+  <p class="where">Where: any laboratory on any floor. Its panel now shows the whole network.</p>
+  <p>Before 1.9 each floor's labs ran their own single project. Now every lab in the plant works on one shared list of projects, and every floor sees the same list.</p>
+
+  <h3>Project slots</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Labs in the plant (any floors)</th><th class="n">Projects at once</th></tr></thead>
+    <tbody><tr><td>1 or 2</td><td class="n">1</td></tr><tr><td>3 to 5</td><td class="n">2</td></tr><tr><td>6 or more</td><td class="n">3</td></tr></tbody>
+  </table></div>
+  <p>You can still build up to 5 labs on each floor, so three slots are within reach.</p>
+
+  <h3>How fast research goes</h3>
+  <ul>
+    <li>Each floor's labs work out their speed exactly as before, at that floor's own rate, and the network adds the floors together.</li>
+    <li>Local bonuses stay local: Corran Plateau's +25% research, and the observatory beside a lab, speed up only the labs on Corran.</li>
+    <li>Plant-wide bonuses (technologies, Legacy, discoveries, the programme's +10% research) apply to every floor's labs once, so nothing counts twice.</li>
+    <li>One project gets the whole network's speed. Two or three projects share it evenly, so total research per second is the same as before. More slots let projects run side by side; they don't make research faster.</li>
+    <li>Technology costs and research times are unchanged.</li>
+    <li>Away from the game, every floor's labs push the projects at 50%, once, as before.</li>
+  </ul>
+
+  <h3>What the lab panel shows</h3>
+  <p>Labs in total, projects running out of slots, network speed, each running project with its progress and time left, and each floor's labs and rate. The Experimental Ventures tab is still there next to the tree.</p>
+</section>
+
+<!-- 4 -->
+<section id="control" class="system">
+  <div class="head"><span class="num">4</span><h2>Automatic reactor control</h2></div>
+  <p class="where">Where: a reactor's panel, AUTOMATIC CONTROL. Unlocks with High-flow cooling, a technology that was already in the game.</p>
+  <p>Fit a controller to a reactor, switch it on and pick a target temperature. It moves the power slider for you to hold that temperature.</p>
+
+  <h3>Price: 20% of the reactor, at least ϟ1,000</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Reactor</th><th>Floor</th><th class="n">Controller</th></tr></thead>
+    <tbody>
+      <tr><td>Experimental reactor</td><td>Mainland</td><td class="n">ϟ1,000</td></tr>
+      <tr><td>Small commercial reactor</td><td>Mainland</td><td class="n">ϟ7,100</td></tr>
+      <tr><td>Large commercial reactor</td><td>Mainland</td><td class="n">ϟ114,000</td></tr>
+      <tr><td>Advanced nuclear reactor</td><td>Mainland</td><td class="n">ϟ864,000</td></tr>
+      <tr><td>Floating reactor</td><td>Seren Atoll</td><td class="n">ϟ170,000</td></tr>
+      <tr><td>Gas-cooled reactor</td><td>Corran Plateau</td><td class="n">ϟ1,900,000</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>How it behaves</h3>
+  <ul>
+    <li>Target from 40° to 75°, 65° to start.</li>
+    <li>It moves power one 5% step at a time, no faster than one step every 2 seconds, towards the highest setting that settles at or below the target. It allows for the cooling, mode and heat bonuses the reactor has at that moment.</li>
+    <li>It steers by where the temperature will settle, not where it is now, so it doesn't overshoot or swing back and forth. The one exception: at 85° or more (Overheating) it steps down regardless.</li>
+    <li>It stays between 25% and 150%. If even 150% can't reach the target, it just runs at 150%.</li>
+    <li>It never restarts a reactor after a shutdown. It waits and shows Cooling after shutdown; the restart button is always yours.</li>
+    <li>Moving the power slider by hand switches it off at once. Other reactors are not affected.</li>
+    <li>Every reactor has its own controller, on every floor. It works while you are away too, inside the usual 25% electricity and 8-hour limit.</li>
+  </ul>
+
+  <h3>What the panel shows</h3>
+  <p>Fit, on/off and the target, plus target, power, temperature and one status:</p>
+  <div class="pills">
+    <span class="pill">Increasing output</span><span class="pill">Reducing output</span><span class="pill">Holding temperature</span><span class="pill">Cooling after shutdown</span><span class="pill">Manual</span>
+  </div>
+</section>
+
+<!-- Together -->
+<section id="together">
+  <h2>How they work together</h2>
+  <ul>
+    <li>Automatic control knows about operating modes and cooling towers, so it holds the target in Economy, Standard or High output, with or without a tower.</li>
+    <li>The programme's +10% research reward speeds up the whole research network by exactly 10%.</li>
+    <li>Technologies finished by the network count towards programme objectives.</li>
+    <li>Programme rewards stack with discoveries and Legacy in one bonus calculation, each applied once.</li>
+    <li>Scientific Legacy clears every floor as before, so modes and controllers go with the reactors. It also clears the programme rewards and the research projects. Rare and better discoveries stay, as before.</li>
+    <li>Time away: all three floors, every controller and the shared research list keep going while the game is shut, at the usual rates.</li>
+  </ul>
+</section>
+
+<section id="saves">
+  <h2>Older saves</h2>
+  <ul>
+    <li>Saves from before 1.9 load. Nothing is lost or refunded.</li>
+    <li>Reactors load in Standard with no controller.</li>
+    <li>Each floor's old research project joins the shared list with its progress. If two floors were researching the same technology, it becomes one project, keeping whichever was further on. If more projects are running than your slots allow, they all finish; the limit only stops you starting new ones.</li>
+    <li>The programme starts at Stage 1 with every objective read from the save. Electricity generated is estimated from what was sold plus what is in storage, so it never claims more than really happened. The 125% spell was never recorded, so that one has to be run.</li>
+    <li>Export save and Import save carry everything new: modes, controllers, targets, the programme and the research list.</li>
+  </ul>
+</section>
+
+<section id="tested">
+  <h2>How it was tested</h2>
+  <p>Each system was built, tested and saved separately, one after another, then all four were checked together.</p>
+  <h3>Automated checks: 467 of 467 passing</h3>
+  <p>These cover the rules, saving and loading, old-save migration, and the combinations above, including eight hours away on three floors with every reactor in High output with a tower and a controller: none shut down, all ended at or under target.</p>
+  <h3>Clicked through in a real browser</h3>
+  <ul>
+    <li>Switching a reactor to High output raised it from 23.30 to 26.79 E/s.</li>
+    <li>Stages 1 and 2 played on a new save with real clicks. Stage 1 paid exactly ϟ100 and did not count as sales; Stage 2 gave exactly +5%; a second claim did nothing.</li>
+    <li>The research panel on a three-floor plant: Corran's labs ran at 5.21 against Seren's 2.99, as the local bonuses say they should.</li>
+    <li>A controller fitted for ϟ7,100 held a target of 65° at 105% power, settling at 61.9°. Moving the slider switched it to Manual and left the other reactors alone.</li>
+    <li>Dragging a building to move it, clicking to select it, picking Ruben up and flinging him, and exporting a save and importing it back.</li>
+    <li>The one-file game and the web copy both start with no errors.</li>
+  </ul>
+</section>
+
+<section id="issues">
+  <h2>Known issues and what hasn't been tested</h2>
+  <ul>
+    <li>Standard mode is never the single best choice (see the table in section 1). Reported, not changed.</li>
+    <li>The top bar overflows on narrow screens once the Legacy button appears. This was already there before 1.9.</li>
+    <li>Nobody has yet played from an empty plant all the way through Stages 3 to 5; those were checked with tests and the ready-made plants.</li>
+    <li>Not tried on a phone.</li>
+  </ul>
+</section>
+
+<footer>
+  <span class="label">For the curious</span>
+  <p>Built in five commits: <span class="mono">2d0117b</span> operating modes, <span class="mono">d32aaaf</span> programme, <span class="mono">6763e30</span> research network, <span class="mono">284334a</span> automatic control, <span class="mono">5bc6895</span> checks and documentation. About 1,840 lines added across 11 files: the rules, the screens, the styles, the checks and the notes.</p>
+</footer>
+</div>
+
+<script>
+(function () {
+  const svg = document.getElementById('heat-chart');
+  const L = 48, R = 548, T = 16, B = 262;
+  const x = p => L + (p - 0.25) / 1.25 * (R - L);
+  const y = t => B - (t - 20) / 120 * (B - T);
+  const modes = [['Economy', 0.70, 'var(--cool)'], ['Standard', 1, 'var(--muted)'], ['High output', 1.25, 'var(--heat)']];
+  let out = '';
+  // Temperature bands: Stable under 70, Hot 70 to 84, Overheating 85 to 99, shutdown at 100.
+  const bands = [[70, 85, 'var(--warn)', 'HOT'], [85, 100, 'var(--heat)', 'OVERHEATING'], [100, 140, 'var(--bad)', 'SHUTDOWN']];
+  for (const [a, b, c, name] of bands) {
+    out += '<rect x="' + L + '" y="' + y(b) + '" width="' + (R - L) + '" height="' + (y(a) - y(b)) + '" fill="' + c + '" fill-opacity=".1"/>';
+    out += '<text x="' + (L + 6) + '" y="' + (y(b) + 13) + '" style="fill:' + c + '">' + name + '</text>';
+  }
+  out += '<text x="' + (L + 6) + '" y="' + (y(70) + 13) + '">STABLE</text>';
+  for (let t = 20; t <= 140; t += 20) {
+    out += '<line x1="' + L + '" x2="' + R + '" y1="' + y(t) + '" y2="' + y(t) + '" stroke="var(--line)"/>';
+    out += '<text x="' + (L - 8) + '" y="' + (y(t) + 4) + '" text-anchor="end">' + t + '°</text>';
+  }
+  for (let p = 0.25; p <= 1.501; p += 0.25) {
+    out += '<text x="' + x(p) + '" y="' + (B + 18) + '" text-anchor="middle">' + Math.round(p * 100) + '%</text>';
+  }
+  out += '<text x="' + R + '" y="' + (B + 34) + '" text-anchor="end">POWER</text>';
+  for (const [name, heat, colour] of modes) {
+    let d = '';
+    for (let p = 0.25; p <= 1.5001; p += 0.025) d += (d ? 'L' : 'M') + x(p).toFixed(1) + ' ' + y(Math.min(140, 20 + 40 * p * p * heat)).toFixed(1);
+    out += '<path d="' + d + '" fill="none" stroke="' + colour + '" stroke-width="2.5"/>';
+    const end = Math.min(140, 20 + 40 * 2.25 * heat);
+    out += '<circle cx="' + x(1.5) + '" cy="' + y(end) + '" r="3.5" fill="' + colour + '"/>';
+  }
+  // Each curve is named at its 150% end, in the margin to the right of the plot.
+  for (const [name, heat, colour] of modes) {
+    const end = 20 + 40 * 2.25 * heat;
+    out += '<text x="' + (R + 8) + '" y="' + (y(end) + 4) + '" style="fill:' + (colour === 'var(--muted)' ? 'var(--fg)' : colour) + '">' + name + ' ' + (Math.round(end * 10) / 10) + '°</text>';
+  }
+  svg.innerHTML = out;
+})();
+</script>
+</body>
+</html>
