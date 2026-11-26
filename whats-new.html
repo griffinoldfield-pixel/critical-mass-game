@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Powerworks 1.9</title>
+<title>Powerworks 2.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -101,24 +101,27 @@ body{margin:0}
 <body>
 <div class="wrap">
 <header>
-  <span class="label">Critical Mass: Powerworks · version 1.9.1 · 25 November 2026</span>
-  <h1>What's new in 1.9</h1>
-  <p class="lede">Four new systems for running a nuclear plant: reactor operating modes, a five-stage development programme, one research network across every floor, and automatic reactor control. Everything below is in the game now.</p>
+  <span class="label">Critical Mass: Powerworks · version 2.0.2 · 26 November 2026</span>
+  <h1>What's new in 2.0 and 1.9</h1>
+  <p class="lede">2.0 adds isotope production: a laboratory that turns electricity into four isotopes you can keep or sell. 1.9 added four systems for running the plant: reactor operating modes, a five-stage development programme, one research network across every floor, and automatic reactor control. Everything below is in the game now.</p>
   <div class="facts">
-    <span class="fact"><b>4</b> new systems</span>
-    <span class="fact"><b>482</b> automated checks, all passing</span>
+    <span class="fact"><b>5</b> new systems</span>
+    <span class="fact"><b>537</b> automated checks, all passing</span>
     <span class="fact">older saves load</span>
   </div>
-  <a class="play" href="./">Play 1.9 in the browser <span>opens the game</span></a>
+  <a class="play" href="./">Play in the browser <span>opens the game</span></a>
+  <div class="note"><b>2.0.2:</b> each isotope recipe now has its own use: Carbon-14 makes 5 a batch (was 4); Cobalt-60 sells for ϟ300 (was ϟ270), Iodine-131 for ϟ380 (was ϟ340) and Molybdenum-99 for ϟ900 (was ϟ960). Isotopes already in stock keep their count and sell at the new prices.</div>
+  <div class="note"><b>2.0.1:</b> the top bar no longer covers the floor name on phones, and the Library describes the research network correctly. Nothing in the rules changed.</div>
   <div class="note"><b>Changed in 1.9.1, after a balance check:</b> High output now makes ×1.40 heat (was ×1.25), so each mode is best somewhere; automatic exports go up to 30, 75 and 160 E/s (were 18, 36 and 68); Advanced reactor engineering and Commercial reactor design take 480 s and 600 s (were 720 s and 900 s). Older saves load as before.</div>
 </header>
 
 <nav aria-label="Contents">
   <ol>
-    <li><a href="#modes"><i>1</i>Reactor operating modes</a></li>
-    <li><a href="#programme"><i>2</i>Scientific Development Programme</a></li>
-    <li><a href="#network"><i>3</i>Unified research network</a></li>
-    <li><a href="#control"><i>4</i>Automatic reactor control</a></li>
+    <li><a href="#isotopes"><i>1</i>Isotope production (2.0)</a></li>
+    <li><a href="#modes"><i>2</i>Reactor operating modes</a></li>
+    <li><a href="#programme"><i>3</i>Scientific Development Programme</a></li>
+    <li><a href="#network"><i>4</i>Unified research network</a></li>
+    <li><a href="#control"><i>5</i>Automatic reactor control</a></li>
     <li><a href="#together"><i>·</i>How they work together</a></li>
     <li><a href="#saves"><i>·</i>Older saves</a></li>
     <li><a href="#tested"><i>·</i>How it was tested</a></li>
@@ -127,8 +130,57 @@ body{margin:0}
 </nav>
 
 <!-- 1 -->
+<section id="isotopes" class="system">
+  <div class="head"><span class="num">1</span><h2>Isotope production (2.0)</h2></div>
+  <p class="where">Where: build an isotope laboratory, then open MATERIALS in the top bar.</p>
+  <p>Until now electricity could only be sold. An isotope laboratory spends it on isotopes instead, which you can keep or sell for Flux. How the isotopes are made is kept abstract: the game shows what they are used for, not how real ones are produced.</p>
+
+  <h3>The laboratory</h3>
+  <ul>
+    <li>Research <b>Applied isotope production</b> (ϟ25,000, 10 minutes, after Commercial reactor design), then build the laboratory for ϟ25,000. Up to 2 on each floor.</li>
+    <li>It makes one recipe at a time. Pick a recipe while it is idle, then Start. Pause stops it drawing and keeps the batch; Stop throws the batch away with no refund. Repeat on starts the next batch by itself.</li>
+    <li>Its panel shows the batch's progress, what a batch sells for now, what the same electricity would sell for on this floor now, and the difference.</li>
+  </ul>
+
+  <h3>The four recipes</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Isotope</th><th class="n">Draw</th><th class="n">Batch</th><th class="n">Electricity</th><th class="n">Makes</th><th class="n">List price each</th></tr></thead>
+    <tbody>
+      <tr><td>Carbon-14 (¹⁴C)</td><td class="n">4 E/s</td><td class="n">30 s</td><td class="n">120 E</td><td class="n">5</td><td class="n">ϟ32</td></tr>
+      <tr><td>Cobalt-60 (⁶⁰Co)</td><td class="n">12 E/s</td><td class="n">150 s</td><td class="n">1,800 E</td><td class="n">6</td><td class="n">ϟ300</td></tr>
+      <tr><td>Iodine-131 (¹³¹I)</td><td class="n">6 E/s</td><td class="n">180 s</td><td class="n">1,080 E</td><td class="n">4</td><td class="n">ϟ380</td></tr>
+      <tr><td>Molybdenum-99 (⁹⁹Mo)</td><td class="n">50 E/s</td><td class="n">240 s</td><td class="n">12,000 E</td><td class="n">10</td><td class="n">ϟ900</td></tr>
+    </tbody>
+  </table></div>
+  <p>Iodine-131 also needs a reactor running on the same floor. Each recipe has a short note on what the isotope is used for, and the Library has a page on isotopes.</p>
+
+  <h3>Where the electricity comes from</h3>
+  <ul>
+    <li>A laboratory takes electricity from its own floor's storage: after cooling towers, before research and automatic exports.</li>
+    <li>If there is not enough, it slows down and says <i>Short of electricity</i>, then carries on by itself when there is more. Storage never goes below zero.</li>
+    <li>A batch always costs the same electricity, however slowly it gets it.</li>
+  </ul>
+
+  <h3>MATERIALS: keeping and selling</h3>
+  <ul>
+    <li>Every floor's isotopes go into one shared stock. MATERIALS lists each one with its stock, price and value, and the whole collection's value.</li>
+    <li>Sell 1, Sell 10 or Sell all. Each button shows the Flux it pays before you press it. Prices move a few per cent once a minute.</li>
+    <li>Isotope sales are not electricity sales: they do not count towards export objectives, the programme or Legacy points.</li>
+  </ul>
+
+  <h3>Is it worth it?</h3>
+  <p>While your exports keep up with the plant, isotopes earn a little more than selling the electricity, never a lot more. Each recipe has its own use (since 2.0.2):</p>
+  <ul>
+    <li><b>Iodine-131</b> earns the most when there is no electricity to spare, at any price and on any floor, but only while a reactor on its floor runs.</li>
+    <li><b>Carbon-14</b> is small and safe: on the mainland it beats exporting at any price, it needs no reactor and draws only 4 E/s, so it earns little.</li>
+    <li><b>Cobalt-60</b> is the best use of a modest surplus, about 8 to 23 E/s that would otherwise be wasted; without one it roughly breaks even.</li>
+    <li><b>Molybdenum-99</b> loses money unless electricity is being wasted, and is by far the best when a lot is: storage full and more made than the export limit can sell.</li>
+  </ul>
+</section>
+
+<!-- 2 -->
 <section id="modes" class="system">
-  <div class="head"><span class="num">1</span><h2>Reactor operating modes</h2></div>
+  <div class="head"><span class="num">2</span><h2>Reactor operating modes</h2></div>
   <p class="where">Where: click any reactor, then OPERATING MODE in its panel.</p>
   <p>Every reactor now runs in one of three modes. The mode is separate from the power slider: power says how hard the reactor is pushed, the mode says how it trades electricity against heat.</p>
   <div class="cols three">
@@ -174,9 +226,9 @@ body{margin:0}
   </ul>
 </section>
 
-<!-- 2 -->
+<!-- 3 -->
 <section id="programme" class="system">
-  <div class="head"><span class="num">2</span><h2>Scientific Development Programme</h2></div>
+  <div class="head"><span class="num">3</span><h2>Scientific Development Programme</h2></div>
   <p class="where">Where: the small tracker above Construct, bottom left. Click its title to open the programme; the − button folds the objective list away.</p>
   <p>Five stages that guide a run from the first hand-split atom to a plant on several floors. Each stage has three objectives. When all three are ticked you press Complete and get that stage's reward, which lasts until you begin again with Scientific Legacy.</p>
 
@@ -220,9 +272,9 @@ body{margin:0}
   </ul>
 </section>
 
-<!-- 3 -->
+<!-- 4 -->
 <section id="network" class="system">
-  <div class="head"><span class="num">3</span><h2>Unified research network</h2></div>
+  <div class="head"><span class="num">4</span><h2>Unified research network</h2></div>
   <p class="where">Where: any laboratory on any floor. Its panel now shows the whole network.</p>
   <p>Before 1.9 each floor's labs ran their own single project. Now every lab in the plant works on one shared list of projects, and every floor sees the same list.</p>
 
@@ -247,9 +299,9 @@ body{margin:0}
   <p>Labs in total, projects running out of slots, network speed, each running project with its progress and time left, and each floor's labs and rate. The Experimental Ventures tab is still there next to the tree.</p>
 </section>
 
-<!-- 4 -->
+<!-- 5 -->
 <section id="control" class="system">
-  <div class="head"><span class="num">4</span><h2>Automatic reactor control</h2></div>
+  <div class="head"><span class="num">5</span><h2>Automatic reactor control</h2></div>
   <p class="where">Where: a reactor's panel, AUTOMATIC CONTROL. Unlocks with High-flow cooling, a technology that was already in the game.</p>
   <p>Fit a controller to a reactor, switch it on and pick a target temperature. It moves the power slider for you to hold that temperature.</p>
 
@@ -300,18 +352,18 @@ body{margin:0}
 <section id="saves">
   <h2>Older saves</h2>
   <ul>
-    <li>Saves from before 1.9 load. Nothing is lost or refunded.</li>
+    <li>Saves from 1.9 load into 2.0 with an empty isotope stock. Saves from before 1.9 load too. Nothing is lost or refunded.</li>
     <li>Reactors load in Standard with no controller.</li>
     <li>Each floor's old research project joins the shared list with its progress. If two floors were researching the same technology, it becomes one project, keeping whichever was further on. If more projects are running than your slots allow, they all finish; the limit only stops you starting new ones.</li>
     <li>The programme starts at Stage 1 with every objective read from the save. Electricity generated is estimated from what was sold plus what is in storage, so it never claims more than really happened. The 125% spell was never recorded, so that one has to be run.</li>
-    <li>Export save and Import save carry everything new: modes, controllers, targets, the programme and the research list.</li>
+    <li>Export save and Import save carry everything new: modes, controllers, targets, the programme, the research list, the laboratories and the isotope stock.</li>
   </ul>
 </section>
 
 <section id="tested">
   <h2>How it was tested</h2>
-  <p>Each system was built, tested and saved separately, one after another, then all four were checked together.</p>
-  <h3>Automated checks: 482 of 482 passing</h3>
+  <p>Each system was built, tested and saved separately, one after another, then all were checked together.</p>
+  <h3>Automated checks: 537 of 537 passing</h3>
   <p>These cover the rules, saving and loading, old-save migration, and the combinations above, including eight hours away on three floors with every reactor in High output with a tower and a controller: none shut down, all ended at or under target.</p>
   <h3>Clicked through in a real browser</h3>
   <ul>
@@ -321,17 +373,19 @@ body{margin:0}
     <li>A controller fitted for ϟ7,100 held a target of 65° at 105% power, settling at 61.9°. Moving the slider switched it to Manual and left the other reactors alone.</li>
     <li>Dragging a building to move it, clicking to select it, picking Ruben up and flinging him, and exporting a save and importing it back.</li>
     <li>The one-file game and the web copy both start with no errors.</li>
+    <li>2.0: building a laboratory, choosing and starting a recipe, running out of electricity and carrying on, finishing a batch, selling, a second laboratory on another floor, switching floors, saving and reloading, and the away card.</li>
+    <li>2.0.1: the top bar and panels at 320, 360, 375, 390 and 500 pixels wide.</li>
   </ul>
 </section>
 
 <section id="issues">
   <h2>Known issues and what hasn't been tested</h2>
   <ul>
-    <li>In 1.9.0 Standard mode was never the single best choice. A balance check found it, and 1.9.1 fixed it by making High output run hotter (section 1).</li>
+    <li>In 1.9.0 Standard mode was never the single best choice. A balance check found it, and 1.9.1 fixed it by making High output run hotter (section 2).</li>
     <li>Older saves with a reactor left in High output at a power that now shuts it down have that reactor stepped down once, on loading, to the highest power that settles no hotter than before.</li>
-    <li>The top bar overflows on narrow screens once the Legacy button appears. This was already there before 1.9.</li>
     <li>Nobody has yet played from an empty plant all the way through Stages 3 to 5; those were checked with tests and the ready-made plants.</li>
-    <li>Not tried on a phone.</li>
+    <li>Checked at phone widths in a desktop browser, not on a real phone.</li>
+    <li>Molybdenum-99 is still very strong when a lot of electricity would otherwise be wasted. That is the value of not wasting it, and is left as it is.</li>
   </ul>
 </section>
 

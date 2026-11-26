@@ -350,8 +350,12 @@ a.action { display: inline-flex; align-items: center; justify-content: center; t
   .resource:nth-child(2) { min-width: 126px; } .save-status { display: none; }
 }
 @media (max-width: 680px) {
-  .hud { height: 102px; flex-wrap: wrap; gap: 0; padding-inline: 11px; }
-  .brand, .hud-end { height: 47px; } .hud-end { margin-left: auto; }
+  /* The bar takes the rows it needs (the buttons drop below the name when
+     they do not fit beside it); --hud is its measured height, set in ui.js,
+     and everything below it is placed from that. */
+  .hud { height: auto; flex-wrap: wrap; gap: 0; padding-inline: 11px; }
+  .brand { height: 47px; }
+  .hud-end { min-height: 47px; margin-left: auto; flex-wrap: wrap; justify-content: flex-end; align-content: center; row-gap: 5px; padding-block: 4px; }
   .brand-mark { width: 27px; height: 27px; } .brand-mark .icon { width: 19px; height: 19px; }
   .wordmark { font-size: 14px; } .brand-sub { font-size: 8px; margin-top: 3px; }
   .resources { flex: 1 0 100%; height: 55px; order: 3; border-top: 1px solid #e0e4dc; }
@@ -365,23 +369,24 @@ a.action { display: inline-flex; align-items: center; justify-content: center; t
   .resource-meter { inset-inline: 5px; }
   .resource[data-tip]:hover::after, .resource[data-tip]:focus-visible::after { width: 120px; font-size: 10px; }
   .resource:last-child[data-tip]:hover::after, .resource:last-child[data-tip]:focus-visible::after { inset-inline: auto 0; }
-  .world-frame { inset: 113px 11px 71px; }
-  .site-label { top: 122px; left: 23px; }
-  .world-switch { top: 160px; left: 23px; width: 170px; } .world-switch p, .world-switch small { display: none; }
-  .hud-button { height: 30px; padding: 0 7px; }
-  .panel.discovery-menu { top: 113px; width: calc(100% - 22px); max-height: calc(100% - 185px); } .discovery-grid { grid-template-columns: 1fr 1fr; }
+  .world-frame { inset: calc(var(--hud, 102px) + 11px) 11px 71px; }
+  .site-label { top: calc(var(--hud, 102px) + 20px); left: 23px; }
+  .world-switch { top: calc(var(--hud, 102px) + 58px); left: 23px; width: 170px; } .world-switch p, .world-switch small { display: none; }
+  .hud-button { height: 30px; padding: 0 6px; font-size: 9.5px; letter-spacing: .02em; }
+  .hud-end { gap: 5px; } .hud-end .icon-button { width: 30px; height: 30px; }
+  .panel.discovery-menu { top: calc(var(--hud, 102px) + 11px); width: calc(100% - 22px); max-height: calc(100% - var(--hud, 102px) - 83px); } .discovery-grid { grid-template-columns: 1fr 1fr; }
   .discovery-note { right: 11px; bottom: 66px; width: min(252px, calc(100% - 22px)); }
-  .panel.reader { top: 113px; width: calc(100% - 22px); max-height: calc(100% - 185px); } .library-list { grid-template-columns: 1fr; }
-  #panel { top: auto; bottom: 66px; right: 11px; max-height: min(51vh, calc(100% - 195px)); }
+  .panel.reader { top: calc(var(--hud, 102px) + 11px); width: calc(100% - 22px); max-height: calc(100% - var(--hud, 102px) - 83px); } .library-list { grid-template-columns: 1fr; }
+  #panel { top: auto; bottom: 66px; right: 11px; max-height: min(51vh, calc(100% - var(--hud, 102px) - 93px)); }
   .floor-controls { inset: auto 11px 13px; }
   .asset-count, .coordinates, .build-button kbd { display: none; }
   .panel { width: min(326px, calc(100% - 22px)); }
   .panel-body { padding: 13px; }
   .build-menu { bottom: 65px; left: 11px; }
-  .settings-menu { top: 109px; right: 11px; }
-  .tech-menu { top: 113px; width: calc(100% - 22px); max-height: calc(100% - 185px); }
+  .settings-menu { top: calc(var(--hud, 102px) + 7px); right: 11px; }
+  .tech-menu { top: calc(var(--hud, 102px) + 11px); width: calc(100% - 22px); max-height: calc(100% - var(--hud, 102px) - 83px); }
   .tech-detail { flex-wrap: wrap; }
-  .toast { top: 108px; }
+  .toast { top: calc(var(--hud, 102px) + 6px); }
   .stage-note { bottom: 66px; max-width: calc(100% - 22px); flex-wrap: wrap; gap: 6px 12px; }
   .machine-tag { font-size: 8px; gap: 4px; padding: 4px 5px; }
 }
@@ -506,6 +511,38 @@ a.action { display: inline-flex; align-items: center; justify-content: center; t
 .project-row .storage-meter { grid-column: 1 / -1; margin: 2px 0 0; }
 .project-row .storage-meter i { background: #a886bb; }
 .network-note { font-size: 11px !important; color: #6c796d !important; }
+
+/* Isotope laboratory and MATERIALS (2.0) */
+/* With MATERIALS the top bar has five buttons, which must still fit a 360px phone. */
+@media (max-width: 400px) { .hud-button { padding: 0 5px; font-size: 9px; letter-spacing: 0; } .hud-end { gap: 4px; }
+  .material-row .material-sell .action { flex-direction: column; gap: 1px; padding: 5px 4px; } }
+.recipe-list { display: grid; gap: 5px; margin: 6px 0 4px; }
+.recipe { display: grid; grid-template-columns: 34px 1fr auto; gap: 8px; align-items: center; width: 100%; padding: 7px 9px; border: 1px solid #ccd5c4;
+  border-radius: 4px; background: #f5f7f0; color: #2f3a32; text-align: left; cursor: pointer; font: inherit; }
+.recipe:hover:not(:disabled) { background: #e6ecde; }
+.recipe.active { background: #dceabf; box-shadow: inset 3px 0 0 #6f8f4a; }
+.recipe:disabled { opacity: .45; cursor: default; }
+.recipe-symbol { font: 600 13px var(--mono); color: #4d6a6e; text-align: center; }
+.recipe-name { display: grid; gap: 1px; min-width: 0; }
+.recipe-name strong { font-size: 12.5px; }
+.recipe-name small { font: 10px var(--mono); color: #6a776e; }
+.recipe-value { font: 600 11px var(--mono); color: #4e6248; white-space: nowrap; }
+#iso-net.gain { color: #4d7a3c; } #iso-net.loss { color: #a35a3b; }
+.iso-controls { display: grid; grid-template-columns: repeat(3, 1fr); }
+.panel.materials-menu { width: min(700px, calc(100% - 40px)); }
+.material-list { display: grid; gap: 6px; margin-top: 10px; }
+.material-row { display: grid; grid-template-columns: 34px minmax(110px, 1fr) 64px 84px 292px; gap: 10px; align-items: center; padding: 9px 10px;
+  border: 1px solid #dfe5da; border-radius: 4px; background: #fafbf7; }
+.material-name { display: grid; gap: 1px; min-width: 0; }
+.material-name small, .material-figure small { font: 9.5px var(--mono); letter-spacing: .05em; color: #6a776e; }
+.material-figure { display: grid; gap: 1px; text-align: right; font: 600 12px var(--mono); }
+.material-sell { display: flex; gap: 4px; }
+.material-sell .action { flex: 1; justify-content: center; padding: 6px 6px; font-size: 11px; white-space: nowrap; gap: 6px; }
+@media (max-width: 680px) {
+  .material-row { grid-template-columns: 30px 1fr 1fr; }
+  .material-sell { grid-column: 1 / -1; }
+  .material-sell .action { flex: 1; }
+}
 </style>
 
 </head>
@@ -529,7 +566,7 @@ a.action { display: inline-flex; align-items: center; justify-content: center; t
         <span class="resource-icon output-icon" data-icon="output"></span><div><span class="resource-label">OUTPUT</span><div class="resource-value"><span id="rate-value">0.0</span><small> /s</small></div></div>
       </div>
     </div>
-    <div class="hud-end"><span id="save-status" class="save-status" role="status"><i></i><span>Autosave on</span></span><button id="discovery-button" class="hud-button plain" title="Scientific discoveries">DISCOVERIES 0/18</button><button id="library-button" class="hud-button plain" title="Library: how the real thing works">LIBRARY</button><button id="legacy-button" class="hud-button" title="Legacy: begin again for a lasting bonus" hidden></button><button id="settings-button" class="icon-button" aria-label="Settings" title="Settings" data-icon="settings"></button></div>
+    <div class="hud-end"><span id="save-status" class="save-status" role="status"><i></i><span>Autosave on</span></span><button id="discovery-button" class="hud-button plain" title="Scientific discoveries">DISCOVERIES 0/18</button><button id="materials-button" class="hud-button plain" title="Materials: isotopes in stock" hidden>MATERIALS</button><button id="library-button" class="hud-button plain" title="Library: how the real thing works">LIBRARY</button><button id="legacy-button" class="hud-button" title="Legacy: begin again for a lasting bonus" hidden></button><button id="settings-button" class="icon-button" aria-label="Settings" title="Settings" data-icon="settings"></button></div>
   </header>
   <div class="site-label" aria-hidden="true">
     <span class="site-marker"></span><div><strong id="site-name">MAINLAND</strong><span>DRAG GROUND TO PAN · DRAG BUILDINGS TO MOVE</span></div>
@@ -541,6 +578,7 @@ a.action { display: inline-flex; align-items: center; justify-content: center; t
   <aside id="build-menu" class="panel build-menu" aria-label="Construction" hidden></aside>
   <section id="tech-menu" class="panel tech-menu" aria-label="Technology tree" hidden></section>
   <section id="settings-menu" class="panel settings-menu" aria-label="Settings" hidden></section>
+  <section id="materials-menu" class="panel discovery-menu materials-menu" aria-label="Materials" hidden></section>
   <section id="discovery-menu" class="panel discovery-menu" aria-label="Scientific discoveries" hidden></section>
   <section id="programme-menu" class="panel programme-menu" aria-label="Scientific Development Programme" hidden></section>
   <div id="programme-tracker" class="programme-tracker" hidden></div>
@@ -706,6 +744,12 @@ const MACHINES = {
     short: 'The largest station there is.', size: 3, cost: 9500000, rate: 1150, height: 176,
     tech: 'gasCooling', limit: 1,
     upgrades: [{name: 'Raise the outlet temperature', cost: 14000000, rate: 1500, stage: 'High temperature'}]
+  },
+  isotope: {
+    name: 'Isotope laboratory', tag: 'Isotope Lab', category: 'Materials facility', color: '#6f8f94',
+    description: 'Shielded equipment that uses a steady supply of electricity to make small batches of radioactive isotopes for medicine and industry. It draws from this floor\'s storage.',
+    short: 'Spends electricity on isotopes to sell or keep.', size: 1, cost: 25000, height: 98,
+    tech: 'isotopes', limit: 2
   }
 };
 const ECONOMY = {
@@ -778,6 +822,7 @@ const TECH = {
   atomic: {branch: 0, col: 0, name: 'Improved atomic experimentation', flux: 320, time: 75, pre: [], boost: {manual: 1.20}, effect: '+20% electricity from timed experiments.'},
   fieldTuning: {branch: 0, col: 1, name: 'Field tuning', flux: 1820, time: 210, pre: ['atomic'], boost: {manual: 1.14}, effect: '+14% manual output. Unlocks the tuned chamber for the manual splitter.'},
   precisionTiming: {branch: 0, col: 2, name: 'Precision timing', flux: 7600, time: 390, pre: ['fieldTuning', 'loadBalancing'], boost: {target: 1.20}, effect: 'Widens the manual timing targets by 20%.'},
+  isotopes: {branch: 0, col: 4, name: 'Applied isotope production', flux: 25000, time: 600, pre: ['commercial'], effect: 'Unlocks the isotope laboratory, which spends electricity on isotopes to sell or keep.'},
   optimization: {branch: 0, col: 3, name: 'Energy optimisation', flux: 310000, time: 2700, pre: ['reactor2', 'computation', 'gridSync'], boost: {output: 1.10}, effect: '+10% electricity from all generators and timed experiments.'},
 
   physics: {branch: 1, col: 0, name: 'Nuclear physics', flux: 1700, time: 240, pre: ['efficiency', 'coolant'], effect: 'Unlocks the four-tile experimental reactor.'},
@@ -870,6 +915,36 @@ const WORLDS = {
    its power, never the ambient part. 'cooling' scales each tower's
    strength before the cap. Rare and rarer are permanent: they survive
    beginning again. Common and Uncommon do not. */
+/* Isotopes (2.0). A laboratory draws `rate` E/s from its own floor's
+   storage for `time` seconds and then adds `units` to the plant's shared
+   stock, so a batch always costs rate × time E. Prices are Flux per unit
+   and drift by at most `swing` either way, slowly. The numbers are set
+   against the value of the same electricity sold (base ϟ0.70 × the plant's
+   sale bonuses, about ×1.36 when the laboratory unlocks, ϟ0.95 per E at
+   the average price). Each recipe has its own use (2.0.2, see
+   docs/isotope-balance-review-2.0.1.md):
+     Carbon-14     1.33 ϟ/E, small and safe: on the mainland it beats
+                   exporting at every price, it needs no reactor, but it
+                   draws only 4 E/s
+     Cobalt-60     1.00 ϟ/E, about break-even; the best use of roughly 8 to
+                   23 E/s that would otherwise be wasted
+     Iodine-131    1.41 ϟ/E, the best with no electricity to spare, at every
+                   price, but only while a reactor on the same floor runs
+     Molybdenum-99 0.75 ϟ/E, loses against exporting; the biggest sink for
+                   electricity that would otherwise be wasted
+   Production is a fictional abstraction: electricity powers the equipment;
+   it is not turned into matter. See docs/CHANGELOG.md, 2.0. */
+const ISOTOPES = {
+  c14: {name: 'Carbon-14', symbol: '¹⁴C', rate: 4, time: 30, units: 5, price: 32, period: 410,
+    text: 'A slowly decaying form of carbon, with a half-life of about 5,700 years. Living things take it in and stop when they die, which is how radiocarbon dating works, and it is used to trace carbon through chemistry and biology.'},
+  co60: {name: 'Cobalt-60', symbol: '⁶⁰Co', rate: 12, time: 150, units: 6, price: 300, period: 530,
+    text: 'Gives off strong gamma rays and has a half-life of about 5.3 years. Used to sterilise medical equipment and food, in radiotherapy, and to inspect welds and castings.'},
+  i131: {name: 'Iodine-131', symbol: '¹³¹I', rate: 6, time: 180, units: 4, price: 380, period: 470, needsReactor: true,
+    text: 'Has a half-life of about 8 days. The thyroid gathers iodine from the blood, so small amounts are used to diagnose and treat thyroid conditions.'},
+  mo99: {name: 'Molybdenum-99', symbol: '⁹⁹Mo', rate: 50, time: 240, units: 10, price: 900, period: 610,
+    text: 'Has a half-life of about 66 hours and decays into technetium-99m, the most widely used isotope in medical imaging. Hospitals receive it in generators and draw off the technetium as needed.'}
+};
+const ISOTOPE_MARKET = {swing: .05, step: 60};
 const RARITIES = {
   common: {name: 'Common', colour: '#7f8781', weight: 55},
   uncommon: {name: 'Uncommon', colour: '#5b9446', weight: 28},
@@ -1044,7 +1119,7 @@ function freshState(world = 'mainland') {
     world, energy: 0, time: 0, nextId: 4, lastAutoSale: 0, splitCount: 0,
     buildings: STARTERS.map(b => ({...b})), discovered: world === 'mainland' ? ['auto'] : [], projects: [], autoSell: true,
     bank: {flux: 0, earned: 0}, done: [], settings: {volume: .30, mute: false},
-    legacy: freshLegacy(), links: 0, peers: [], discoveries: {}, discoveryClock: 0
+    legacy: freshLegacy(), links: 0, peers: [], discoveries: {}, discoveryClock: 0, materials: freshMaterials()
   };
 }
 function freshLegacy() { return {points: 0, total: 0, resets: 0, past: 0, perks: {}}; }
@@ -1052,7 +1127,7 @@ function freshGame() {
   return linkGame({
     current: 'mainland', worlds: {mainland: freshState()}, bank: {flux: 0, earned: 0}, done: [],
     legacy: freshLegacy(), library: {}, settings: {volume: .30, mute: false}, discoveries: {}, ventures: freshVentures(),
-    programme: freshProgramme(), projects: []
+    programme: freshProgramme(), projects: [], materials: freshMaterials()
   });
 }
 function worldOpen(game, id) { return !WORLDS[id].tech || game.done.includes(WORLDS[id].tech); }
@@ -1065,7 +1140,7 @@ function linkGame(game) {
     const floor = game.worlds[id];
     floor.world = id; floor.bank = game.bank; floor.done = game.done;
     floor.settings = game.settings; floor.legacy = game.legacy; floor.discoveries = game.discoveries;
-    floor.programme = game.programme; floor.projects = game.projects;
+    floor.programme = game.programme; floor.projects = game.projects; floor.materials = game.materials;
     floor.links = open.length - 1;
     floor.peers = open.filter(other => other !== id).map(other => game.worlds[other]);
   }
@@ -1427,6 +1502,8 @@ function advanceState(state, dt, callbacks = {}) {
     state.energy = Math.max(0, state.energy - wanted * state.coolingSupply);
     if (ledger) ledger.drawn += wanted * state.coolingSupply;
   } else state.coolingSupply = 1;
+  // Isotope laboratories draw next, from what is left, before any export.
+  isotopeStep(state, dt, share, ledger);
   // The research network: this floor's labs push every running project
   // on by their share, so the floors together give the network's speed,
   // split evenly between the projects. Offline the share is scaled here,
@@ -1492,12 +1569,14 @@ function advanceIdle(state, seconds, shares = {}) {
    player about it. */
 function offlineProgress(game, seconds, shares = {}) {
   const projects = game.projects.map(project => ({key: project.key, before: 1 - project.remaining / TECH[project.key].time}));
-  const summary = {away: Math.max(0, seconds), counted: 0, produced: 0, drawn: 0, sold: 0, flux: 0, research: projects,
+  const summary = {away: Math.max(0, seconds), counted: 0, produced: 0, drawn: 0, sold: 0, flux: 0, research: projects, isotopes: {}, isotopeEnergy: 0,
     efficiency: shares.production ?? ECONOMY.offlineProduction, researchEfficiency: shares.research ?? ECONOMY.offlineResearch};
   for (const floor of Object.values(game.worlds)) {
     const ledger = advanceIdle(floor, seconds, shares);
     summary.counted = Math.max(summary.counted, ledger.seconds);
     for (const key of ['produced', 'drawn', 'sold', 'flux']) summary[key] += ledger[key];
+    summary.isotopeEnergy += ledger.isotopeEnergy || 0;
+    for (const [key, n] of Object.entries(ledger.isotopes || {})) summary.isotopes[key] = (summary.isotopes[key] || 0) + n;
   }
   for (const project of projects) {
     const still = game.projects.find(p => p.key === project.key);
@@ -1553,7 +1632,7 @@ function validPlacement(state, type, x, y, map = occupied(state.buildings)) {
 }
 function construct(state, type, x, y, map) {
   if (validPlacement(state, type, x, y, map)) return null;
-  const building = newReactorFields({id: state.nextId++, type, x, y, level: 0, purchasedAt: state.time, paidFlux: MACHINES[type].cost});
+  const building = newIsotopeFields(newReactorFields({id: state.nextId++, type, x, y, level: 0, purchasedAt: state.time, paidFlux: MACHINES[type].cost}));
   state.bank.flux -= MACHINES[type].cost;
   state.buildings.push(building);
   discoverConstruction(state, type);
@@ -1678,6 +1757,128 @@ function discoveryNotice(id) {
     keep: discoveryPermanent(id) ? 'Permanent through Scientific Legacy.' : 'Resets with Scientific Legacy.'};
 }
 
+/* Isotope laboratories (2.0). Each one makes one recipe at a time from its
+   own floor's storage; the stock of isotopes is the whole plant's.
+
+   The order inside one step of advanceState, the same at the controls and
+   while away: (1) reactors and controllers set their temperatures, (2)
+   machines generate into storage, up to its capacity, (3) cooling towers
+   draw, (4) isotope laboratories draw, one after another in the order they
+   were built, (5) research, (6) automatic exports sell from what is left.
+   Each step only takes what is in storage, so electricity is used once
+   and storage never goes below zero. Away, (2), (3) and (4) all run at the
+   same reduced share, so a batch costs the same electricity either way
+   and only takes four times as long. */
+const ISOTOPE_KEYS = Object.keys(ISOTOPES);
+function freshMaterials() {
+  const stock = {};
+  for (const key of ISOTOPE_KEYS) stock[key] = 0;
+  return stock;
+}
+const isotopeBatchEnergy = key => ISOTOPES[key].rate * ISOTOPES[key].time;
+function newIsotopeFields(building) {
+  if (building.type === 'isotope') Object.assign(building, {recipe: ISOTOPE_KEYS[0], status: 'idle', progress: 0, repeat: true});
+  return building;
+}
+/* Why a running laboratory is not making anything right now, or ''. */
+function isotopeHold(state, building) {
+  if (building.status !== 'running') return '';
+  if (ISOTOPES[building.recipe].needsReactor && !state.buildings.some(b => isReactor(b.type) && !b.shutdown)) return 'reactor';
+  return '';
+}
+function selectIsotope(building, key) {
+  if (building.type !== 'isotope' || !Object.hasOwn(ISOTOPES, key) || building.status !== 'idle') return false;
+  building.recipe = key;
+  return true;
+}
+function startIsotope(building, key = building.recipe) {
+  if (building.type !== 'isotope' || building.status !== 'idle' || !selectIsotope(building, key)) return false;
+  building.status = 'running'; building.progress = 0;
+  return true;
+}
+function pauseIsotope(building) {
+  if (building.status !== 'running') return false;
+  building.status = 'paused';
+  return true;
+}
+function resumeIsotope(building) {
+  if (building.status !== 'paused') return false;
+  building.status = 'running';
+  return true;
+}
+/* Stopping throws the batch away: the electricity it used is not refunded. */
+function stopIsotope(building) {
+  if (building.type !== 'isotope' || building.status === 'idle') return false;
+  building.status = 'idle'; building.progress = 0; building.supply = 1;
+  return true;
+}
+function setIsotopeRepeat(building, on) {
+  if (building.type !== 'isotope') return false;
+  building.repeat = !!on;
+  return true;
+}
+/* One step for every laboratory on a floor. A laboratory wants its rate
+   for the step (times the share while away); it takes what storage holds,
+   up to that, and its batch moves on by exactly the electricity it took.
+   Short of electricity it slows in proportion and goes on when there is
+   more. `supply` is the share it got, for the panel. */
+function isotopeStep(state, dt, share = 1, ledger) {
+  for (const b of state.buildings) {
+    if (b.type !== 'isotope') continue;
+    b.hold = isotopeHold(state, b);
+    if (b.status !== 'running' || b.hold) { b.supply = b.status === 'running' ? 0 : 1; continue; }
+    const recipe = ISOTOPES[b.recipe], batch = isotopeBatchEnergy(b.recipe);
+    let budget = recipe.rate * dt * share;
+    const wanted = budget;
+    let got = 0;
+    while (budget > 1e-12) {
+      const take = Math.min(budget, batch - b.progress, Math.max(0, state.energy));
+      state.energy -= take; b.progress += take; budget -= take; got += take;
+      if (ledger) ledger.isotopeEnergy = (ledger.isotopeEnergy || 0) + take;
+      if (b.progress < batch - 1e-7) break;
+      // A batch is done: into the stock, then again or stop.
+      b.progress = 0;
+      state.materials[b.recipe] += recipe.units;
+      if (ledger) { ledger.isotopes = ledger.isotopes || {}; ledger.isotopes[b.recipe] = (ledger.isotopes[b.recipe] || 0) + recipe.units; }
+      if (!b.repeat) { b.status = 'idle'; break; }
+    }
+    b.supply = b.status !== 'running' || wanted <= 0 ? 1 : Math.min(1, got / wanted);
+  }
+}
+/* What one unit sells for now: the list price, drifting slowly by at most
+   ISOTOPE_MARKET.swing either way, the same on every floor. It moves once a
+   minute, so the Flux a sale button shows is the Flux the sale pays. */
+function isotopePrice(key, time) {
+  const item = ISOTOPES[key], minute = Math.floor(time / ISOTOPE_MARKET.step) * ISOTOPE_MARKET.step;
+  return Math.round(item.price * (1 + ISOTOPE_MARKET.swing * Math.sin(minute / item.period)) * 100) / 100;
+}
+const plantTime = game => game.worlds.mainland.time;
+/* What selling `count` (or all, for Infinity) would pay now, and how many. */
+function isotopeQuote(game, key, count) {
+  if (!Object.hasOwn(ISOTOPES, key)) return {count: 0, proceeds: 0};
+  const n = Math.max(0, Math.min(Math.floor(count), game.materials[key]));
+  return {count: n, proceeds: n * isotopePrice(key, plantTime(game))};
+}
+/* Sells from the shared stock. The Flux goes in the bank, once. It is not
+   counted as an electricity sale: not in bank.earned, so not towards
+   Scientific Legacy or any programme objective, like Experimental Ventures. */
+function sellIsotopes(game, key, count) {
+  const quote = isotopeQuote(game, key, count);
+  if (!quote.count) return quote;
+  game.materials[key] -= quote.count;
+  game.bank.flux += quote.proceeds;
+  return quote;
+}
+function materialsValue(game) {
+  return ISOTOPE_KEYS.reduce((sum, key) => sum + game.materials[key] * isotopePrice(key, plantTime(game)), 0);
+}
+/* What the same electricity would fetch sold on this floor now, per E. */
+const electricityValue = state => marketPrice(state.time) * saleMultiplier(state);
+/* True when the floor makes more than it can export and storage is full:
+   electricity a laboratory takes then costs nothing. */
+function floorSurplus(state) {
+  return state.energy >= totalCapacity(state) * .95 && netOutput(state) > automaticSaleRate(state);
+}
 /* The Scientific Development Programme. See PROGRAMME in data.js. */
 const PROGRAMME_PUSH = 1.25;
 function freshProgramme(best = 0) {
@@ -1898,6 +2099,8 @@ function beginAgain(game) {
   // The programme starts again at Stage 1; only the record of the best stage stays.
   game.programme = freshProgramme(game.programme.best);
   game.projects = [];
+  // Isotopes in stock are lost with the plant.
+  game.materials = freshMaterials();
   linkGame(game);
   return gained;
 }
@@ -1912,7 +2115,7 @@ function serializeGame(game, indent) {
   return JSON.stringify({
     version: 3, balance: SAVE_BALANCE, current: game.current, flux: game.bank.flux, earned: game.bank.earned, done: game.done,
     legacy: game.legacy, library: game.library, settings: game.settings, discoveries: game.discoveries, ventures: game.ventures,
-    programme: game.programme, research: game.projects, worlds, savedAt: Date.now()
+    programme: game.programme, research: game.projects, materials: game.materials, worlds, savedAt: Date.now()
   }, null, indent);
 }
 const LEGACY_RESEARCH_TIME = {
@@ -2003,6 +2206,15 @@ function parseGame(raw) {
       }
     }
     parseVentures(game.ventures, saved.ventures);
+    // Isotopes in stock (2.0). Older saves have none.
+    if (saved.materials !== undefined) {
+      if (!saved.materials || typeof saved.materials !== 'object') badSave();
+      for (const key of ISOTOPE_KEYS) {
+        const n = saved.materials[key] ?? 0;
+        if (!Number.isSafeInteger(n) || n < 0) badSave();
+        game.materials[key] = n;
+      }
+    }
   } else {
     // Older saves never counted what was earned. What was spent is a fair floor for it.
     const mainland = game.worlds.mainland;
@@ -2125,6 +2337,19 @@ function parseWorld(saved, id, doneList, version) {
       building.auto = building.controller && b.auto === true;
       if (b.target !== undefined) setReactorTarget(building, b.target);
     }
+    if (b.type === 'isotope') {
+      // Saves from before 2.0 have no laboratories; a bad field is a bad save.
+      newIsotopeFields(building);
+      if (b.recipe !== undefined && !Object.hasOwn(ISOTOPES, b.recipe)) bad();
+      if (b.status !== undefined && !['idle', 'running', 'paused'].includes(b.status)) bad();
+      if (b.recipe !== undefined) building.recipe = b.recipe;
+      if (b.status !== undefined) building.status = b.status;
+      if (b.progress !== undefined) {
+        if (!validQuantity(b.progress) || b.progress >= isotopeBatchEnergy(building.recipe)) bad();
+        building.progress = building.status === 'idle' ? 0 : b.progress;
+      }
+      if (b.repeat !== undefined) building.repeat = b.repeat === true;
+    }
     return building;
   });
   for (const original of STARTERS) {
@@ -2200,9 +2425,13 @@ const LIBRARY = {
     how: "Each one makes 1.55 E a second before upgrades and technologies, and its two upgrades lift that without using another slot. Slots are the scarce thing: a floor starts with two and technologies add more. The machine itself is invented. Nothing real splits atoms one at a time on demand, and the full detail explains why not.",
     deep: "No real device splits individual atoms on demand to make useful power, and it is worth knowing why. To split a nucleus you must hit it with a neutron, and free neutrons are not available from a tap: outside a nucleus a neutron decays with a half life of about ten minutes. Particle accelerators can make them by smashing protons into heavy metal targets, a process called spallation, but an accelerator uses far more energy than the fissions it triggers release, unless those fissions go on to cause others. That is exactly what a chain reaction is, and it is why every real nuclear power source is a reactor and not a splitter. Designs called accelerator driven systems do combine the two: a subcritical core that cannot sustain itself, kept running by an accelerator, which stops the moment the beam is switched off. None has been built at power station scale."},
   lab: {group: "Machines", title: "Research laboratory",
-    short: "Runs one research project at a time. More labs, faster projects.",
-    how: "A project costs Flux to start and then takes time. A second laboratory adds 15 per cent, a third a little less, and the best-equipped lab on the floor sets a bonus for all of them. Each floor runs its own project, so a second floor with a lab means two projects at once. Technologies, once finished, count on every floor.",
+    short: "Researches technologies for the whole plant. More labs, faster research.",
+    how: "A project costs Flux to start and then takes time. Every laboratory on every floor works in one research network. On each floor a second laboratory adds 15 per cent, a third a little less, and the best-equipped lab there adds a bonus for that floor; the network adds the floors together, so the first lab on a new floor adds the most. Three labs in the network can run two projects at once and six can run three, sharing the speed equally. Technologies, once finished, count on every floor.",
     deep: "Most of what is known about reactors was learned in laboratories long before any power station was built, and the working method has not changed: measure, compare with prediction, and find out why they differ. The properties that matter most are cross sections, which describe how likely a nucleus is to capture or be split by a neutron of a given speed. They cannot be calculated well from first principles, so they are measured, isotope by isotope and energy by energy, and collected in large public data libraries used by every reactor designer in the world. Materials are tested by putting samples inside research reactors for years to see how radiation changes them: steel becomes brittle, graphite swells and shrinks, fuel cracks. A typical analysis laboratory would hold mass spectrometers, which sort atoms by mass and can tell uranium-235 from uranium-238, and gamma spectrometers, which identify radioactive substances from the exact energies of the rays they emit, each isotope having its own fingerprint."},
+  isotope: {group: "Machines", title: "Isotope laboratory",
+    short: "Spends electricity on isotopes, to sell or keep.",
+    how: "A laboratory makes one isotope at a time in batches. While it works it draws a steady amount of electricity from its own floor's storage, before anything is exported; a batch costs the same electricity however long it takes, and if storage runs short it slows down rather than stopping the plant. The isotopes go into one stock for the whole plant, shown under MATERIALS, where they can be kept or sold. Whether that beats selling the electricity depends on its price, on the floor, and above all on whether the plant makes more than it can export. In the game, electricity powers the equipment; it does not turn into matter.",
+    deep: "Radioactive isotopes are atoms whose nuclei are unstable and settle by giving off radiation, each at its own rate, measured by the half-life: the time for half of any amount to decay. That rate decides what an isotope is good for. Carbon-14, with a half-life of about 5,700 years, is formed naturally in the upper atmosphere, taken up by living things and no longer replaced after death, which is what radiocarbon dating measures; as a label it lets chemists and biologists follow carbon through a reaction. Cobalt-60, about 5.3 years, gives off penetrating gamma rays and is used to sterilise medical supplies, in some radiotherapy and to inspect welds. Iodine-131, about 8 days, is used in medicine because the thyroid gathers iodine from the blood. Molybdenum-99, about 66 hours, matters for what it becomes: technetium-99m, the isotope behind most nuclear medicine scans, with a half-life of only 6 hours. Because molybdenum-99 decays within days it cannot be stockpiled, so hospitals depend on a short chain of supply from a small number of facilities worldwide, and an outage at one of them is felt quickly. In the game none of them decay in stock; that is a simplification."},
   reactor: {group: "Machines", title: "Experimental reactor",
     short: "The first machine that keeps itself going.",
     how: "12 E a second from four tiles, nearly eight automatic splitters' worth, and 19 once it is refitted as the MK-II. A splitter has to be driven. A reactor does not: each fission releases neutrons that cause the next, so once started it sustains itself. That is why it makes so much more, and why everything after it is about carrying heat away.",
@@ -2706,6 +2935,58 @@ function labArt(ctx, t, running, crew, level) {
   }
   for (const technician of crew) technicianArt(ctx, technician);
 }
+/* The isotope laboratory: a pale shielded housing with a small glass
+   containment chamber beside it. Working, the chamber glows softly and a
+   faint band rises through it; selected, a thin bar shows the batch. */
+function isotopeArt(ctx, t, active, progress, selected) {
+  // Housing, its roof and a service door.
+  solid(ctx, .14, .16, .46, .48, 12, 34, 'white');
+  solid(ctx, .16, .18, .42, .44, 46, 4, 'light');
+  solid(ctx, .24, .24, .18, .16, 50, 6, 'white');
+  vents(ctx, .60, .24, 24, 3, .18, 'right');
+  face(ctx, .20, .64, 12, .12, 20, '#d9dfd6', 'left', '#aeb8af');
+  // A small sign with a trefoil on the front.
+  face(ctx, .36, .64, 26, .16, 12, '#f3f5ee', 'left', '#aab4ab');
+  const [sx, sy] = floorPoint(.44, .64, 32);
+  ctx.save();
+  ctx.fillStyle = '#5d6b63';
+  for (let i = 0; i < 3; i++) {
+    const a = -Math.PI / 2 + i * Math.PI * 2 / 3;
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.arc(sx, sy, 3.6, a - .5, a + .5); ctx.closePath(); ctx.fill();
+  }
+  oval(ctx, sx, sy, 1.1, 1.1, '#f3f5ee'); oval(ctx, sx, sy, .6, .6, '#5d6b63');
+  ctx.restore();
+  // The containment chamber: plinth, glass, cap, and a pipe to the housing.
+  solid(ctx, .58, .56, .28, .28, 12, 6, 'light');
+  pipe(ctx, [[.60, .52, 30], [.68, .62, 30]], 'metal', 3);
+  const glow = active ? .55 + .3 * Math.sin(t * 2.4) : .16;
+  const [gx, gy] = floorPoint(.72, .70, 18);
+  ctx.save();
+  ctx.globalAlpha *= .55;
+  cylinder(ctx, .72, .70, 18, 26, 9.5, 'white');
+  ctx.restore();
+  light(ctx, .72, .70, 29, active ? '#8fd3c6' : '#c6cfc8', glow, 4.2);
+  if (active) {
+    // A faint band rising through the glass.
+    const rise = (t * .45) % 1;
+    ctx.save();
+    ctx.globalAlpha *= .45 * Math.sin(rise * Math.PI);
+    oval(ctx, gx, gy - rise * 24, 8.4, 3.6, null, '#7cc4b6', 1);
+    ctx.restore();
+  }
+  cylinder(ctx, .72, .70, 44, 3, 10.5, 'metal');
+  // A status lamp on the roof.
+  light(ctx, .30, .30, 57, active ? '#9ed7a6' : '#c9cfc6', active ? .85 : .5, 2.1);
+  // Batch progress, only while selected.
+  if (selected && progress >= 0) {
+    const [bx, by] = floorPoint(.4, .4, 76);
+    ctx.save();
+    ctx.fillStyle = '#dfe5dccc'; ctx.fillRect(bx - 15, by, 30, 4);
+    ctx.fillStyle = '#6f9a72'; ctx.fillRect(bx - 15, by, 30 * clamp(progress, 0, 1), 4);
+    ctx.strokeStyle = '#9aa89c'; ctx.lineWidth = .6; ctx.strokeRect(bx - 15, by, 30, 4);
+    ctx.restore();
+  }
+}
 function coolingTower(ctx, x, y, t, active, upgraded) {
   cylinder(ctx, x, y, 16, 12, 26, 'metal');
   cylinder(ctx, x, y, 28, 42, 18, 'white', 25);
@@ -2963,6 +3244,7 @@ function drawMachine(ctx, building, opts = {}) {
   if (type === 'exchange') exchangeArt(ctx, t, level);
   if (type === 'auto') automaticArt(ctx, t, opts.active, level);
   if (type === 'lab') labArt(ctx, t, opts.research, opts.crew || [], level);
+  if (type === 'isotope') isotopeArt(ctx, t, opts.active, opts.progress ?? -1, opts.selected);
   if (WORLD_ART[type]) WORLD_ART[type](ctx, t, opts.active, level, opts.sun);
   if (spec.reactorTier !== undefined) {
     ctx.save();
@@ -3758,9 +4040,11 @@ function renderWorld(t, dt) {
       crewOnScreen.push({x: screenX, y: screenY, labId: b.id, index, order, technician});
     }
     const reactor = isReactor(b.type);
-    const working = isTower(b.type) ? (state.coolingSupply ?? 1) > 0 && reactorsInRange(state, b) > 0 : active && !(reactor && b.shutdown);
+    const working = isTower(b.type) ? (state.coolingSupply ?? 1) > 0 && reactorsInRange(state, b) > 0 :
+      b.type === 'isotope' ? b.status === 'running' && !b.hold && (b.supply ?? 1) > 0 : active && !(reactor && b.shutdown);
     drawMachine(ctx, b, {time: still ? 0 : t, active: working, fill, crew, research: state.projects.length > 0, selected: b.id === selectedId,
       heat: reactor ? b.heat ?? 0 : 0, shutdown: reactor && !!b.shutdown,
+      progress: b.type === 'isotope' && b.status !== 'idle' ? b.progress / isotopeBatchEnergy(b.recipe) : -1,
       sun: daylight(state, MACHINES[b.type]),
       hovered: b.id === hoverId, pulse: b.type === 'manual' ? Math.max(0, 1 - (t - lastSplit) / .54) : 0,
       rise, alpha: .48 + age * .52});
@@ -3958,7 +4242,16 @@ let splitResult = '';
 let pendingDismantle = null;
 const panel = $('panel'), buildMenu = $('build-menu'), techMenu = $('tech-menu'), settingsMenu = $('settings-menu');
 const legacyMenu = $('legacy-menu'), reader = $('reader'), discoveryMenu = $('discovery-menu'), programmeMenu = $('programme-menu');
-const surfaces = [panel, buildMenu, techMenu, settingsMenu, legacyMenu, reader, discoveryMenu, programmeMenu];
+const materialsMenu = $('materials-menu');
+/* On a narrow screen the top bar is as tall as its buttons need; the
+   stylesheet places the floor name and the panels below it from --hud. */
+{
+  const hud = document.querySelector('.hud'), root = document.documentElement;
+  const measure = () => root.style.setProperty('--hud', hud.offsetHeight + 'px');
+  if (window.ResizeObserver) new ResizeObserver(measure).observe(hud);
+  measure();
+}
+const surfaces = [panel, buildMenu, techMenu, settingsMenu, legacyMenu, reader, discoveryMenu, programmeMenu, materialsMenu];
 const uiNumbers = {flux: state.bank.flux, energy: state.energy, rate: netOutput(state)};
 let lastSave = 0, resetting = false;
 function saveText(message, failed = false) {
@@ -4001,7 +4294,7 @@ function exportSave() {
 function exportGame() {
   const copy = document.documentElement.cloneNode(true);
   for (const id of ['machine-labels', 'crew-name', 'panel', 'build-menu', 'tech-menu', 'settings-menu', 'legacy-menu', 'reader', 'hover-card', 'discovery-menu', 'discovery-note', 'world-switch']) copy.querySelector('#' + id).replaceChildren();
-  for (const id of ['panel', 'build-menu', 'tech-menu', 'settings-menu', 'legacy-menu', 'reader', 'hover-card', 'discovery-menu', 'programme-menu', 'programme-tracker', 'discovery-note', 'offline-summary', 'venture-result', 'world-switch', 'legacy-button', 'stage-note', 'crew-name', 'placement-note', 'move-note', 'toast']) copy.querySelector('#' + id).hidden = true;
+  for (const id of ['panel', 'build-menu', 'tech-menu', 'settings-menu', 'legacy-menu', 'reader', 'hover-card', 'discovery-menu', 'programme-menu', 'programme-tracker', 'discovery-note', 'offline-summary', 'venture-result', 'world-switch', 'legacy-button', 'materials-button', 'materials-menu', 'stage-note', 'crew-name', 'placement-note', 'move-note', 'toast']) copy.querySelector('#' + id).hidden = true;
   for (const id of ['world', 'zoom-value', 'coordinates', 'hud-energy', 'save-status', 'build-button']) copy.querySelector('#' + id).removeAttribute('style');
   copy.querySelector('#world').className = '';
   download(new Blob(['<!doctype html>\n' + copy.outerHTML], {type: 'text/html'}), 'critical-mass.html');
@@ -4211,6 +4504,8 @@ function renderMachine(b) {
       '%">100%</span><span>150%</span></div>' +
       action('Restart reactor', 'reactor-restart', {full: true, id: 'reactor-restart'}) +
       '<div class="inline-status" id="reactor-note"></div>' + upgradeMarkup(b);
+  } else if (b.type === 'isotope') {
+    inner = isotopePanel(b);
   } else if (isTower(b.type)) {
     inner = stats([['LEVEL', 'machine-level', machineStage(b)], ['COOLING', 'tower-cooling', '−0'], ['POWER USE', 'tower-draw', '0 E/s']]) +
       '<span class="section-label">REACTORS IN RANGE</span><div class="tower-reactors" id="tower-reactors"></div>' +
@@ -4332,6 +4627,8 @@ function updateMachine() {
     setText('auto-sale-note', !rate ? 'Build an automatic splitter to start standing orders.' :
       !state.autoSell ? 'Automatic orders paused' :
       (done(state, 'selling') ? 'Auto-selling' : 'Standing orders at a discount') + ' · Up to ' + compact(rate) + ' E/s');
+  } else if (b.type === 'isotope') {
+    updateIsotopePanel(b);
   } else if (isReactor(b.type)) {
     const limits = ECONOMY.reactorHeat, heat = b.heat ?? limits.ambient;
     const status = reactorStatus(b);
@@ -4802,6 +5099,8 @@ function showAway(summary) {
     '<dt>Offline efficiency</dt><dd>' + Math.round(summary.efficiency * 100) + '%</dd>' +
     '<dt>Electricity generated</dt><dd>' + compact(summary.produced) + ' E</dd>' +
     '<dt>Flux earned</dt><dd>' + money(summary.flux) + '</dd>' +
+    (Object.keys(summary.isotopes || {}).length ? '<dt>Isotopes made</dt><dd>' + Object.entries(summary.isotopes).map(([key, n]) =>
+      n + ' ' + ISOTOPES[key].symbol).join(', ') + ' · ' + compact(summary.isotopeEnergy) + ' E used</dd>' : '') +
     '<dt>Research progress</dt><dd>' + (rows ? Math.round(summary.researchEfficiency * 100) + '% speed' : 'Nothing running') + '</dd></dl>' +
     (rows ? '<ul>' + rows + '</ul>' : '') +
     '<p>Away, the plant runs at ' + Math.round(summary.efficiency * 100) + '% of its electricity and research at ' + Math.round(summary.researchEfficiency * 100) +
@@ -4889,6 +5188,8 @@ function machineNow(b) {
   if (b.type === 'exchange') return money(marketPrice(state.time) * saleMultiplier(state)) + ' per E now';
   if (b.type === 'lab') return state.projects.length ? 'Network researching ' + state.projects.map(p => TECH[p.key].name).join(', ') : 'No project running';
   if (b.type === 'manual') return 'Click, then Space on the mark';
+  if (b.type === 'isotope') return isotopeStatus(b) + (b.status === 'idle' ? '' : ' · ' + ISOTOPES[b.recipe].name + ' ' +
+    Math.floor(b.progress / isotopeBatchEnergy(b.recipe) * 100) + '%');
   if (isTower(b.type)) {
     const reactors = reactorsInRange(state, b);
     return reactors ? 'Cooling ' + reactors + ' reactor' + (reactors === 1 ? '' : 's') + ' · ' + towerStats(b).draw + ' E/s' : 'No reactor in range · idle';
@@ -5004,6 +5305,123 @@ function showNextDiscovery() {
 $('discovery-button').addEventListener('click', openDiscoveries);
 $('discovery-note').addEventListener('click', () => { openDiscoveries(); });
 
+/* Isotope laboratories (2.0): the production panel. */
+function isotopeStatus(b) {
+  if (b.status === 'idle') return 'Idle';
+  if (b.status === 'paused') return 'Paused';
+  if (b.hold === 'reactor') return 'Waiting for a reactor';
+  return (b.supply ?? 1) < .999 ? 'Short of electricity' : 'Running';
+}
+function isotopePanel(b) {
+  const recipes = ISOTOPE_KEYS.map(key => {
+    const r = ISOTOPES[key];
+    return '<button class="recipe" data-action="isotope-pick-' + key + '" id="recipe-' + key + '"><span class="recipe-symbol">' + r.symbol + '</span>' +
+      '<span class="recipe-name"><strong>' + r.name + '</strong><small>' + r.time + ' s · ' + r.rate + ' E/s · ' + amount(isotopeBatchEnergy(key)) + ' E · ' +
+      r.units + ' units' + (r.needsReactor ? ' · needs a running reactor' : '') + '</small></span><span class="recipe-value" id="recipe-value-' + key + '"></span></button>';
+  }).join('');
+  return stats([['STATUS', 'iso-status', 'Idle'], ['DRAWING', 'iso-draw', '0 E/s'], ['IN STOCK', 'iso-stock', '0']]) +
+    '<span class="section-label">BATCH</span><div class="storage-meter"><i id="iso-progress"></i></div><div class="inline-status" id="iso-progress-text"></div>' +
+    '<span class="section-label">ISOTOPE</span><div class="recipe-list">' + recipes + '</div><p class="mode-text" id="iso-text"></p>' +
+    stats([['A BATCH SELLS FOR', 'iso-value', 'ϟ0'], ['ITS ELECTRICITY SOLD', 'iso-cost', 'ϟ0'], ['DIFFERENCE', 'iso-net', 'ϟ0']]) +
+    '<div class="inline-status" id="iso-note"></div><div class="settings-row iso-controls">' +
+    action('Start', 'isotope-start', {id: 'iso-start'}) + action('Pause', 'isotope-pause', {id: 'iso-pause', type: 'alt'}) +
+    action('Stop', 'isotope-stop', {id: 'iso-stop', type: 'alt'}) + '</div>' +
+    action('Repeat automatically: on', 'isotope-repeat', {full: true, type: 'alt', id: 'iso-repeat'});
+}
+const signed = value => (value >= 0 ? '+' : '−') + money(Math.abs(value), 0);
+function updateIsotopePanel(b) {
+  const r = ISOTOPES[b.recipe], batch = isotopeBatchEnergy(b.recipe), share = b.progress / batch;
+  const running = b.status === 'running', supply = b.supply ?? 1;
+  setText('iso-status', isotopeStatus(b));
+  setText('iso-draw', compact(running && !b.hold ? r.rate * supply : 0) + ' E/s');
+  setText('iso-stock', compact(game.materials[b.recipe]) + ' ' + r.symbol);
+  setWidth('iso-progress', share * 100);
+  const left = (batch - b.progress) / r.rate;
+  setText('iso-progress-text', b.status === 'idle' ? 'Choose an isotope and press Start.' :
+    r.name + ' · ' + Math.floor(share * 100) + '% · ' + formatTime(Math.ceil(left)) + ' left at full power');
+  const time = plantTime(game), value = r.units * isotopePrice(b.recipe, time);
+  const surplus = floorSurplus(state), cost = surplus ? 0 : batch * electricityValue(state);
+  for (const key of ISOTOPE_KEYS) {
+    const button = $('recipe-' + key), item = ISOTOPES[key];
+    button.classList.toggle('active', key === b.recipe);
+    button.disabled = b.status !== 'idle' && key !== b.recipe;
+    setText('recipe-value-' + key, money(item.units * isotopePrice(key, time), 0));
+  }
+  setText('iso-text', r.text);
+  setText('iso-value', money(value, 0));
+  setText('iso-cost', surplus ? 'ϟ0 · surplus' : money(cost, 0));
+  setText('iso-net', signed(value - cost));
+  $('iso-net').className = value >= cost ? 'gain' : 'loss';
+  setText('iso-note', b.hold === 'reactor' ? r.name + ' needs a running reactor on this floor. It waits, and goes on by itself when one runs.' :
+    running && supply <= .001 ? 'No electricity in this floor\'s storage, so it is waiting. It starts again by itself when there is some.' :
+    running && supply < .999 ? 'Not enough electricity in storage: working at ' + Math.round(supply * 100) + '%. It speeds up by itself when there is more.' :
+    surplus ? 'This floor makes more than it can export, so electricity used here would otherwise be wasted.' :
+    'Electricity on this floor sells for ' + money(electricityValue(state)) + ' per E now; ' + r.name + ' pays ' + money(value / batch) + ' per E.');
+  $('iso-start').disabled = b.status !== 'idle';
+  $('iso-pause').disabled = b.status === 'idle';
+  $('iso-pause').firstElementChild.textContent = b.status === 'paused' ? 'Resume' : 'Pause';
+  $('iso-stop').disabled = b.status === 'idle';
+  $('iso-repeat').firstElementChild.textContent = 'Repeat automatically: ' + (b.repeat ? 'on' : 'off');
+}
+function isotopeAction(what) {
+  const b = state.buildings.find(item => item.id === selectedId);
+  if (b?.type !== 'isotope') return;
+  let changed = false;
+  if (what.startsWith('pick-')) changed = selectIsotope(b, what.slice(5));
+  else if (what === 'start') changed = startIsotope(b);
+  else if (what === 'pause') changed = b.status === 'paused' ? resumeIsotope(b) : pauseIsotope(b);
+  else if (what === 'stop') {
+    const lost = b.progress;
+    changed = stopIsotope(b);
+    if (changed && lost > 0) toast('Batch stopped · the ' + compact(lost) + ' E it used is not refunded');
+  } else if (what === 'repeat') changed = setIsotopeRepeat(b, !b.repeat);
+  if (!changed) return;
+  sound('ui'); updateMachine(); saveGame();
+}
+/* MATERIALS: the plant's isotopes, one stock for every floor. */
+let materialsSignature = '';
+function updateMaterials() {
+  $('materials-button').hidden = !(done(state, 'isotopes') || ISOTOPE_KEYS.some(key => game.materials[key] > 0));
+  renderMaterials();
+}
+function openMaterials() {
+  cancelRelocation();
+  if (!materialsMenu.hidden) { closeAll(); return; }
+  cancelPlacement(); closeAll(materialsMenu); materialsMenu.hidden = false;
+  materialsSignature = ''; renderMaterials(); sound('ui');
+}
+function renderMaterials() {
+  if (materialsMenu.hidden) return;
+  const time = plantTime(game);
+  const signature = ISOTOPE_KEYS.map(key => game.materials[key] + ':' + isotopePrice(key, time)).join('|');
+  if (signature === materialsSignature) return;
+  materialsSignature = signature;
+  const rows = ISOTOPE_KEYS.map(key => {
+    const item = ISOTOPES[key], owned = game.materials[key], price = isotopePrice(key, time);
+    const sell = [[1, '1'], [10, '10'], [Infinity, 'all']].map(([count, label]) => {
+      const quote = isotopeQuote(game, key, count), allowed = owned > 0 && (count === Infinity || owned >= count);
+      return action('Sell ' + (label === 'all' ? 'all' : label), 'materials-sell-' + key + '-' + label,
+        {type: 'alt', disabled: !allowed, right: allowed ? money(quote.proceeds, 0) : ''});
+    }).join('');
+    return '<div class="material-row"><span class="recipe-symbol">' + item.symbol + '</span><div class="material-name"><strong>' + item.name + '</strong>' +
+      '<small>' + money(price) + ' per unit</small></div><div class="material-figure"><b>' + compact(owned) + '</b><small>IN STOCK</small></div>' +
+      '<div class="material-figure"><b>' + money(owned * price, 0) + '</b><small>VALUE</small></div><div class="material-sell">' + sell + '</div></div>';
+  }).join('');
+  materialsMenu.innerHTML = heading('Materials', MACHINES.isotope.color) + '<div class="panel-body">' +
+    '<div class="tech-header"><h2>Materials</h2><span>COLLECTION VALUE ' + money(materialsValue(game), 0) + '</span></div>' +
+    '<p>Isotopes made by isotope laboratories on every floor, kept in one stock for the whole plant. Keep them, or sell them for Flux at the price shown on each button. Prices move a little once a minute.</p>' +
+    '<p class="keep-legend"><span class="keep-tag">TEMPORARY</span> Lost if you begin again with Scientific Legacy. Isotope sales are not electricity sales: they do not count towards Legacy or programme objectives.</p>' +
+    '<div class="material-list">' + rows + '</div></div>';
+}
+function sellMaterial(spec) {
+  const cut = spec.lastIndexOf('-'), key = spec.slice(0, cut), label = spec.slice(cut + 1);
+  const sale = sellIsotopes(game, key, label === 'all' ? Infinity : Number(label));
+  if (!sale.count) return;
+  sound('sell'); toast('Sold ' + sale.count + ' ' + ISOTOPES[key].name + ' for ' + money(sale.proceeds, 0));
+  materialsSignature = ''; renderMaterials(); saveGame();
+}
+$('materials-button').addEventListener('click', openMaterials);
+
 /* Legacy. The button appears once the first point is in sight. */
 let legacyConfirming = false, legacySignature = '';
 const percent = fraction => '+' + Math.round(fraction * 100) + '%';
@@ -5024,7 +5442,7 @@ function openLegacy() {
 }
 function renderLegacy() {
   const legacy = game.legacy, pending = legacyPending(game);
-  const signature = [pending, legacy.points, legacy.total, legacyConfirming, JSON.stringify(legacy.perks)].join('|');
+  const signature = [pending, legacy.points, legacy.total, legacyConfirming, JSON.stringify(legacy.perks), Math.round(materialsValue(game))].join('|');
   if (signature !== legacySignature) {
     legacySignature = signature;
     const offer = pending ?
@@ -5044,7 +5462,8 @@ function renderLegacy() {
       '<p class="legacy-worth">Every point is worth +' + Math.round(ECONOMY.legacyPointBonus * 100) +
       '% electricity, +' + Math.round(ECONOMY.legacyPointBonus * 100) + '% sale value and +' + Math.round(ECONOMY.legacyPointBonus * 100) + '% research speed, on every floor, for good.</p>' +
       '<span class="section-label">IF YOU BEGAN AGAIN NOW</span><p>' + offer + '</p><div class="inline-status" id="legacy-next"></div>' +
-      '<div class="legacy-lists"><div><span class="section-label">YOU LOSE</span><ul><li>Every machine on every floor</li><li>Every technology</li><li>Common and Uncommon discoveries</li><li>The other floors, until researched again</li><li>Flux in the bank</li><li>A running experiment or uncollected result, not refunded</li></ul></div>' +
+      '<div class="legacy-lists"><div><span class="section-label">YOU LOSE</span><ul><li>Every machine on every floor</li><li>Every technology</li><li>Common and Uncommon discoveries</li><li>The other floors, until researched again</li><li>Flux in the bank</li><li>A running experiment or uncollected result, not refunded</li>' +
+      (done(state, 'isotopes') || materialsValue(game) > 0 ? '<li>Isotopes in stock, worth ' + money(materialsValue(game), 0) + ' now, and any batch being made</li>' : '') + '</ul></div>' +
       '<div><span class="section-label">YOU KEEP</span><ul><li>Legacy points and perks</li><li>Anything read in the Library</li><li>Rare and rarer discoveries</li><li>Settings</li></ul></div></div>' +
       '<div class="settings-row">' + (legacyConfirming ?
         action('Yes, begin again', 'legacy-confirm', {type: 'danger'}) + action('Keep this plant', 'legacy-cancel', {type: 'alt'}) :
@@ -5076,8 +5495,8 @@ function renderSettings() {
     (resetting ? '<p>Confirming replaces this browser’s current plant.</p>' : '') +
     '<hr><span class="section-label">LOOK AT A PLANT</span><p>A ready-made plant at three points in the game. Your own is not touched.</p>' +
     '<div class="settings-row">' + STAGES.map(stage => '<a class="action alt" href="' + stageLink(stage) + '">' + stage[0].toUpperCase() + stage.slice(1) + '</a>').join('') + '</div>' +
-    (guideLink ? '<hr><span class="section-label">WHAT’S NEW</span><p>Everything added in version 1.9, explained.</p>' +
-      '<div class="settings-row"><a class="action alt" href="' + guideLink + '">What’s new in 1.9</a></div>' : '') +
+    (guideLink ? '<hr><span class="section-label">WHAT’S NEW</span><p>Everything added in versions 1.9 and 2.0, explained.</p>' +
+      '<div class="settings-row"><a class="action alt" href="' + guideLink + '">What’s new in 2.0 and 1.9</a></div>' : '') +
     '<hr><span class="section-label">LOCATE ON MAP</span><div class="map-index">' +
     [...buttons.values()].map(b => action(MACHINES[b.type].tag, 'find-' + b.id, {type: 'alt'})).join('') + '</div></div>';
   $('volume').addEventListener('input', e => { state.settings.volume = Number(e.target.value); });
@@ -5091,6 +5510,8 @@ function buttonAction(e) {
   if (key === 'close') { closeAll(); sound('ui'); }
   else if (key === 'split') splitAtom();
   else if (key === 'programme-complete') completeProgrammeStage();
+  else if (key.startsWith('isotope-')) isotopeAction(key.slice(8));
+  else if (key.startsWith('materials-sell-')) sellMaterial(key.slice(15));
   else if (key === 'programme-open') openProgramme();
   else if (key === 'programme-tracker') { game.settings.tracker = game.settings.tracker === false; trackerSignature = ''; updateProgramme(); saveGame(); }
   else if (key === 'reactor-controller' || key === 'reactor-auto') {
@@ -5292,6 +5713,7 @@ function frame(ms) {
   if (currentTime - lastInterface > .10) {
     lastInterface = currentTime;
     updateResources(.10); updateMachine(); drawMarket(); renderTech(); updateBuild(); updateSwitcher(); updateLegacy(); updateDiscoveryButton();
+    updateMaterials();
     if (!ventureCardShown && ventureStatus(game) === 'ready') showVentureResult();
     updateProgramme();
   }
