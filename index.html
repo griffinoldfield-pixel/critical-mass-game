@@ -503,6 +503,25 @@ a.action { display: inline-flex; align-items: center; justify-content: center; t
 .programme-tracker .tracker-open { width: 100%; padding: 6px 10px; border: 0; border-top: 1px solid #dfe5da; background: none; color: #4f6b38; font: 600 10px var(--mono); letter-spacing: .05em; text-align: left; cursor: pointer; }
 @media (max-width: 680px) { .programme-tracker { bottom: 128px; } .programme-strip span { display: none; } }
 
+/* First steps (2.1): one-time opening tasks, in the tracker and the programme panel. */
+.first-steps { margin: 0 0 6px; }
+.first-steps .section-label { display: block; padding: 0 10px; margin: 2px 0 4px; color: #8a6a2a; }
+.programme-tracker .first-steps li, .first-steps li { display: grid; grid-template-columns: 14px 1fr auto; gap: 6px; align-items: start; }
+.first-steps li i { width: 12px; height: 12px; margin-top: 1px; border: 1px dashed #c9a45b; border-radius: 2px; }
+.first-steps li small { color: #6c796d; font: 500 9.5px var(--mono); }
+.first-steps li b { color: #8a6a2a; font: 600 10px var(--mono); white-space: nowrap; }
+.panel .first-steps { margin: 10px 0 4px; padding: 8px 10px; border: 1px solid #ead9b4; border-radius: 4px; background: #fbf7ec; }
+.panel .first-steps .section-label { padding: 0; }
+.panel .first-steps ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; font-size: 12.5px; }
+/* A split flashes the zone it landed in. */
+.timing.hit-2 .perfect-zone { animation: zone-flash-perfect .38s ease-out; }
+.timing.hit-1 .good-zone { animation: zone-flash-good .32s ease-out; }
+.timing.hit-0 .timing-cursor { animation: cursor-miss .25s ease-out; }
+@keyframes zone-flash-perfect { 0% { background: #f4fbd8; box-shadow: 0 0 10px 3px #c5e28a; } 100% { background: #b9d875; box-shadow: none; } }
+@keyframes zone-flash-good { 0% { background: #f2f7df; } 100% { background: #dbe7b7; } }
+@keyframes cursor-miss { 0% { background: #b5603b; } 100% { background: #263a28; } }
+@media (prefers-reduced-motion: reduce) { .timing.hit-2 .perfect-zone, .timing.hit-1 .good-zone, .timing.hit-0 .timing-cursor { animation: none; } }
+
 /* The research network in the lab panel. */
 .research-network { margin-top: 10px; padding: 9px 11px; border: 1px solid #dfe5da; border-radius: 4px; background: #f6f8f2; }
 .research-network p { margin: 4px 0 0; color: #56635a; font-size: 11.5px; }
@@ -616,7 +635,7 @@ const MACHINES = {
     name: 'Manual atom splitter', tag: 'Atom Splitter', category: 'Experimental assembly', color: '#c66442',
     description: 'Generates electricity from timed experiments. Calibrate the equipment to improve each split.',
     size: 1, height: 91, upgrades: [
-      {name: 'Fit precision optics', cost: 150, manual: 1.55, stage: 'Precision optics'},
+      {name: 'Fit precision optics', cost: 60, manual: 1.55, stage: 'Precision optics'},
       {name: 'Install a faster servo', cost: 310, period: .8, target: 1.2, stage: 'Servo drive'},
       {name: 'Fit a tuned chamber', cost: 1200, tech: 'fieldTuning', manual: 1.22, stage: 'Tuned chamber'}
     ]
@@ -624,13 +643,13 @@ const MACHINES = {
   battery: {
     name: 'Electricity storage', tag: 'Energy Storage', category: 'Storage unit', color: '#83a745',
     description: 'Stores generated electricity until it is sold or consumed by other machinery.',
-    size: 1, capacity: 36, height: 72
+    size: 1, capacity: 60, height: 72
   },
   exchange: {
     name: 'Electricity exchange', tag: 'Flux Exchange', category: 'Market terminal', color: '#4d9487',
     description: 'Sells stored electricity for Flux. Standing orders handle small shipments once you automate production.',
     size: 1, height: 79, upgrades: [
-      {name: 'Install better meters', cost: 260, sale: 1.08, stage: 'Metered'},
+      {name: 'Install better meters', cost: 150, sale: 1.08, stage: 'Metered'},
       {name: 'Add a trading terminal', cost: 2100, tech: 'analysis', sale: 1.08, stage: 'Trading terminal'},
       {name: 'Fit a bulk terminal', cost: 28500, tech: 'distribution', sale: 1.08, stage: 'Bulk terminal'}
     ]
@@ -638,10 +657,10 @@ const MACHINES = {
   auto: {
     name: 'Automatic atom splitter', tag: 'Auto Splitter', category: 'Production machinery', color: '#d08743',
     description: 'Runs atomic experiments continuously. Upgrades lift its output without taking another control slot.',
-    short: 'Generates electricity while you idle.', size: 1, cost: 410, rate: 1.55, height: 86,
+    short: 'Generates electricity while you idle.', size: 1, cost: 250, rate: 1.55, height: 86,
     limit: 2, extraSlots: {industry: 2, metallurgy: 2, plantTelemetry: 2},
     upgrades: [
-      {name: 'Fit precision drive', cost: 420, rate: 2.85, stage: 'Improved'},
+      {name: 'Fit precision drive', cost: 280, rate: 2.85, stage: 'Improved'},
       {name: 'Install advanced splitter', cost: 690, tech: 'efficiency', rate: 5.6, stage: 'Advanced'}
     ]
   },
@@ -654,7 +673,7 @@ const MACHINES = {
   lab: {
     name: 'Research laboratory', tag: 'Research Lab', category: 'Research facility', color: '#9a71bb',
     description: 'Research projects cost Flux. Equip the lab or build additional labs to improve research speed.',
-    short: 'Opens the technology tree.', size: 1, cost: 1050, height: 93,
+    short: 'Opens the technology tree.', size: 1, cost: 600, height: 93,
     limit: 2, extraSlots: {industry: 1, computation: 2},
     upgrades: [
       {name: 'Fit precision instruments', cost: 3550, tech: 'labEfficiency', stage: 'Precision instruments'},
@@ -753,7 +772,7 @@ const MACHINES = {
   }
 };
 const ECONOMY = {
-  manualYields: [1, 3, 5], timingPeriod: 2.15, goodWidth: .31, perfectWidth: .13, splitCooldown: .5,
+  manualYields: [1, 4, 8], timingPeriod: 2.15, goodWidth: .31, perfectWidth: .13, splitCooldown: .5,
   batteryUpgrades: [
     {name: 'Expand this storage bank', cost: 520, capacity: 78, stage: 'Expanded'},
     {name: 'Fit balanced cells', cost: 1650, capacity: 180, tech: 'batteries', stage: 'Balanced cells'},
@@ -761,7 +780,10 @@ const ECONOMY = {
     {name: 'Install grid-scale racks', cost: 38000, capacity: 1450, tech: 'gridScaleStorage', stage: 'Grid-scale racks'}
   ],
   price: {base: .70, waves: [[.09, 48], [.055, 14], [.025, 4.8]]},
-  autoSaleInterval: 4, standingOrderRate: 1.55, meteredOrderRate: 2.85, standingOrderPrice: .88,
+  /* Standing orders sell from storage before Automated selling: 3 E/s, or
+     5 once any automatic splitter has its precision drive (2.1; were 1.55
+     and 2.85, which left the opening plant selling most of its output by hand). */
+  autoSaleInterval: 4, standingOrderRate: 3, meteredOrderRate: 5, standingOrderPrice: .88,
   labSpeedExtra: .50, labSpeedDecay: .7, equipmentSpeedPerLevel: .12,
   constructionRevealFraction: .5, minimumRefund: .30, refundDepreciationSeconds: 3600,
   idleLimitHours: 8,
@@ -1066,6 +1088,20 @@ const VENTURES = {
    Rewards multiply a stat for this run only, through technologyFactor, or
    pay Flux once; Scientific Legacy clears them and starts again at Stage 1.
    The highest stage ever completed is kept, as a record only. */
+/* First steps (early game, 2.1). Short one-time tasks shown in the
+   programme tracker during the opening minutes, each paying a small Flux
+   grant the moment it is done. Once per save: Scientific Legacy does not
+   offer them again, so they cannot be farmed. Grants are not sales, so they
+   count for no programme objective and no Legacy points. */
+const FIRST_STEPS = [
+  {key: 'splits', kind: 'splits', target: 3, flux: 10, text: 'Complete 3 atom splits'},
+  {key: 'perfect', kind: 'perfect', target: 3, flux: 25, text: 'Land 3 Perfect splits'},
+  {key: 'sell', kind: 'sold', target: 50, flux: 25, text: 'Sell 50 E at the exchange'},
+  {key: 'upgrade', kind: 'upgrades', target: 1, flux: 30, text: 'Buy an upgrade'},
+  {key: 'auto', kind: 'own', type: 'auto', target: 1, flux: 60, text: 'Build an automatic atom splitter'},
+  {key: 'auto2', kind: 'own', type: 'auto', target: 2, flux: 75, text: 'Own two automatic atom splitters'},
+  {key: 'lab', kind: 'own', type: 'lab', target: 1, flux: 200, text: 'Build a research laboratory'}
+];
 const PROGRAMME = [
   {key: 'foundations', title: 'Atomic foundations',
     objectives: [
@@ -1127,7 +1163,7 @@ function freshGame() {
   return linkGame({
     current: 'mainland', worlds: {mainland: freshState()}, bank: {flux: 0, earned: 0}, done: [],
     legacy: freshLegacy(), library: {}, settings: {volume: .30, mute: false}, discoveries: {}, ventures: freshVentures(),
-    programme: freshProgramme(), projects: [], materials: freshMaterials()
+    programme: freshProgramme(), projects: [], materials: freshMaterials(), firstSteps: []
   });
 }
 function worldOpen(game, id) { return !WORLDS[id].tech || game.done.includes(WORLDS[id].tech); }
@@ -1472,6 +1508,7 @@ function sellEnergy(state, fraction, priceFactor = 1) {
   state.energy = Math.max(0, state.energy - amount);
   state.bank.flux += proceeds;
   state.bank.earned += proceeds;
+  if (state.programme) state.programme.sold = (state.programme.sold || 0) + amount;
   return {amount, proceeds};
 }
 function advanceState(state, dt, callbacks = {}) {
@@ -1879,10 +1916,38 @@ const electricityValue = state => marketPrice(state.time) * saleMultiplier(state
 function floorSurplus(state) {
   return state.energy >= totalCapacity(state) * .95 && netOutput(state) > automaticSaleRate(state);
 }
+/* First steps. See FIRST_STEPS in data.js. */
+function firstStepValue(game, step) {
+  const floors = Object.values(game.worlds), p = game.programme;
+  switch (step.kind) {
+    case 'splits': return floors.reduce((sum, f) => sum + f.splitCount, 0);
+    case 'perfect': return p.perfect || 0;
+    case 'sold': return p.sold || 0;
+    case 'upgrades': return floors.reduce((sum, f) => sum + f.buildings.filter(b => b.level > 0).length, 0);
+    case 'own': return floors.reduce((sum, f) => sum + f.buildings.filter(b => b.type === step.type).length, 0);
+  }
+  return 0;
+}
+/* The steps not yet done, with progress, for the tracker. */
+function firstStepsProgress(game) {
+  return FIRST_STEPS.filter(step => !game.firstSteps.includes(step.key))
+    .map(step => ({...step, value: Math.min(step.target, firstStepValue(game, step))}));
+}
+/* Pays every step that is done and not yet paid, once. Returns those paid. */
+function firstStepsCheck(game) {
+  const paid = [];
+  for (const step of FIRST_STEPS) {
+    if (game.firstSteps.includes(step.key) || firstStepValue(game, step) < step.target) continue;
+    game.firstSteps.push(step.key);
+    game.bank.flux += step.flux;
+    paid.push(step);
+  }
+  return paid;
+}
 /* The Scientific Development Programme. See PROGRAMME in data.js. */
 const PROGRAMME_PUSH = 1.25;
 function freshProgramme(best = 0) {
-  return {stage: 0, best, claimed: [], produced: 0, sustain: 0, reached: {}, start: {produced: 0, techs: 0}};
+  return {stage: 0, best, claimed: [], produced: 0, sustain: 0, perfect: 0, sold: 0, reached: {}, start: {produced: 0, techs: 0}};
 }
 /* The run's stage rewards for one stat, as a multiplier. Read from the
    list of claimed stages every time, so nothing can apply twice. */
@@ -2115,7 +2180,7 @@ function serializeGame(game, indent) {
   return JSON.stringify({
     version: 3, balance: SAVE_BALANCE, current: game.current, flux: game.bank.flux, earned: game.bank.earned, done: game.done,
     legacy: game.legacy, library: game.library, settings: game.settings, discoveries: game.discoveries, ventures: game.ventures,
-    programme: game.programme, research: game.projects, materials: game.materials, worlds, savedAt: Date.now()
+    programme: game.programme, research: game.projects, materials: game.materials, firstSteps: game.firstSteps, worlds, savedAt: Date.now()
   }, null, indent);
 }
 const LEGACY_RESEARCH_TIME = {
@@ -2245,7 +2310,21 @@ function parseGame(raw) {
   linkGame(game);
   if (saved.balance !== SAVE_BALANCE) easeOldHighOutput(game);
   parseProgramme(game, saved.version === 3 ? saved.programme : undefined);
+  parseFirstSteps(game, saved);
   return linkGame(game);
+}
+/* First steps from a save. A save from before them that is already past
+   the opening (beyond Stage 1, an automatic splitter built, or Legacy
+   used) has them all marked done, unpaid; a newer one keeps its list. */
+function parseFirstSteps(game, saved) {
+  const keys = FIRST_STEPS.map(step => step.key);
+  if (Array.isArray(saved.firstSteps)) {
+    game.firstSteps = [...new Set(saved.firstSteps.filter(key => keys.includes(key)))];
+    return;
+  }
+  const pastOpening = game.programme.stage > 0 || game.legacy.resets > 0 ||
+    Object.values(game.worlds).some(f => f.buildings.some(b => b.type === 'auto'));
+  game.firstSteps = pastOpening ? keys : [];
 }
 /* The programme from a save. A save from before it has none: the player
    starts at Stage 1 with every objective read from what the save shows,
@@ -2268,7 +2347,7 @@ function parseProgramme(game, saved) {
   // Exactly the stages before this one, in order, or the save is not trusted.
   if (claimed.length !== saved.stage || claimed.some((key, i) => key !== PROGRAMME[i].key)) return;
   p.stage = saved.stage; p.claimed = claimed.slice(); p.best = Math.max(p.best, p.stage);
-  for (const key of ['produced', 'sustain']) if (validQuantity(saved[key])) p[key] = saved[key];
+  for (const key of ['produced', 'sustain', 'perfect', 'sold']) if (validQuantity(saved[key])) p[key] = saved[key];
   if (validQuantity(saved.start?.produced) && saved.start.produced <= p.produced) p.start.produced = saved.start.produced;
   if (Number.isInteger(saved.start?.techs) && saved.start.techs >= 0 && saved.start.techs <= game.done.length) p.start.techs = saved.start.techs;
   for (const [id, value] of Object.entries(saved.reached || {})) if (value === true && id.length < 40) p.reached[id] = true;
@@ -2590,6 +2669,8 @@ function buildStage(stage) {
     floor.time = 900; floor.lastAutoSale = 900;
     floor.energy = stage === 'start' ? 0 : totalCapacity(floor) * .4;
   }
+  // A ready-made plant is past the opening: no First steps to pay.
+  if (stage !== 'start') game.firstSteps = FIRST_STEPS.map(step => step.key);
   return game;
 }
 </script>
@@ -4238,7 +4319,7 @@ let selectedId = null, placement = null, techSelected = 'atomic', techSignature 
 /* Which side of the laboratory is showing, and whether the last result card is up. */
 let labTab = 'tree', ventureSignature = '', ventureCardShown = false;
 let toastTimer = 0, saveTimer = 0, audio = null, lastHum = 0;
-let splitResult = '';
+let splitResult = '', perfectStreak = 0;
 let pendingDismantle = null;
 const panel = $('panel'), buildMenu = $('build-menu'), techMenu = $('tech-menu'), settingsMenu = $('settings-menu');
 const legacyMenu = $('legacy-menu'), reader = $('reader'), discoveryMenu = $('discovery-menu'), programmeMenu = $('programme-menu');
@@ -4473,7 +4554,7 @@ function renderMachine(b) {
   if (b.type === 'manual') {
     inner = '<div class="section-label">CALIBRATION CYCLE</div><div class="timing" aria-label="Time the slider inside the green target">' +
       '<div class="good-zone" id="good-zone"></div><div class="perfect-zone" id="perfect-zone"></div><div class="timing-cursor" id="timing-cursor"></div></div>' +
-      '<div class="timing-scale"><span>NORMAL +<b id="manual-normal">1</b></span><span>GOOD +<b id="manual-good">3</b></span><span>PERFECT +<b id="manual-perfect">5</b></span></div>' +
+      '<div class="timing-scale"><span>NORMAL +<b id="manual-normal">1</b></span><span>GOOD +<b id="manual-good">4</b></span><span>PERFECT +<b id="manual-perfect">8</b></span></div>' +
       action('Split atom', 'split', {full: true, leading: icon('energy'), right: '<kbd>SPACE</kbd>', id: 'split-button'}) +
       '<div class="inline-status" id="split-result" aria-live="polite"></div>' + upgradeMarkup(b);
   } else if (spec.capacity) {
@@ -4584,12 +4665,16 @@ function splitAtom() {
   const offset = Math.abs(timingPosition(currentTime, profile.period) - .5);
   const tier = offset <= profile.perfect / 2 ? 2 : offset <= profile.good / 2 ? 1 : 0;
   const produced = gainEnergy(state, ECONOMY.manualYields[tier] * profile.output);
-  const result = ['Normal', 'Good', 'Perfect'][tier];
+  if (tier === 2) { perfectStreak++; game.programme.perfect = (game.programme.perfect || 0) + 1; } else perfectStreak = 0;
+  const result = ['Normal', 'Good', 'Perfect'][tier] + (tier === 2 && perfectStreak > 1 ? ' ×' + perfectStreak + ' in a row' : '');
   lastSplit = lastEnergyActivity = currentTime; state.splitCount++;
   splitResult = result + ' · +' + compact(produced) + ' E';
+  // The zone that was hit flashes; restarting the animation needs a reflow, once per split.
+  const bar = document.querySelector('.timing');
+  if (bar) { bar.classList.remove('hit-0', 'hit-1', 'hit-2'); void bar.offsetWidth; bar.classList.add('hit-' + tier); }
   if (state.bank.flux >= MACHINES.auto.cost) splitResult += ' · Splitter affordable';
   else if (state.energy >= totalCapacity(state) - .0001) splitResult += ' · Storage full';
-  pop(b, '+' + compact(produced) + ' E', tier === 2 ? '#47762d' : '#a15638', tier === 2 ? 21 : 9);
+  pop(b, '+' + compact(produced) + ' E', ['#a15638', '#5f7f2e', '#47762d'][tier], [6, 12, 21 + Math.min(10, perfectStreak * 2)][tier]);
   sound(['split', 'good', 'perfect'][tier]);
   const found = manualDiscovery(game, currentTime);
   if (found) discoveryFound(found, state);
@@ -5026,7 +5111,7 @@ function openProgramme() {
 function renderProgramme() {
   if (programmeMenu.hidden) return;
   const p = game.programme, stage = PROGRAMME[p.stage], progress = programmeProgress(game), ready = programmeReady(game);
-  const signature = [p.stage, ready, ...progress.map(o => o.done)].join('|');
+  const signature = [p.stage, ready, ...progress.map(o => o.done), ...firstStepsProgress(game).map(s => s.key + ':' + Math.floor(s.value))].join('|');
   if (signature !== programmeSignature) {
     programmeSignature = signature;
     const strip = PROGRAMME.map((s, i) => '<div class="' + (i < p.stage ? 'done' : i === p.stage ? 'current' : '') + '"><b>' + (i + 1) + '</b><span>' + s.title + '</span></div>').join('');
@@ -5036,7 +5121,7 @@ function renderProgramme() {
     const active = PROGRAMME.filter(s => s.reward.stat && p.claimed.includes(s.key));
     programmeMenu.innerHTML = heading('Development programme', '#6f8f4a') + '<div class="panel-body">' +
       '<h2>' + (stage ? 'Stage ' + (p.stage + 1) + ' of ' + PROGRAMME.length + ' · ' + stage.title : 'Programme complete') + '</h2>' +
-      '<div class="programme-strip">' + strip + '</div>' +
+      '<div class="programme-strip">' + strip + '</div>' + firstStepsMarkup(FIRST_STEPS.length) +
       (stage ? '<span class="section-label">OBJECTIVES</span><ul class="objectives">' + rows + '</ul>' +
         '<div class="programme-reward" id="programme-reward"><span class="section-label">REWARD FOR THIS RUN</span><strong>' + stage.reward.text + '</strong></div>' +
         action(ready ? 'Complete stage ' + (p.stage + 1) : 'Complete the objectives first', 'programme-complete', {full: true, disabled: !ready, id: 'programme-complete'}) +
@@ -5060,7 +5145,9 @@ function updateProgramme() {
   if (tracker.hidden) return;
   const open = game.settings.tracker !== false;
   const progress = programmeProgress(game);
-  const signature = [p.stage, open, ready, ...progress.map(o => o.done + ':' + Math.floor(Math.min(o.value, o.target)))].join('|');
+  const steps = firstStepsProgress(game);
+  const signature = [p.stage, open, ready, ...progress.map(o => o.done + ':' + Math.floor(Math.min(o.value, o.target))),
+    ...steps.map(s => s.key + ':' + Math.floor(s.value))].join('|');
   if (signature === trackerSignature) return;
   trackerSignature = signature;
   tracker.classList.toggle('ready', !!ready);
@@ -5068,9 +5155,26 @@ function updateProgramme() {
     (stage ? 'STAGE ' + (p.stage + 1) + '/' + PROGRAMME.length + ' · ' + stage.title.toUpperCase() : 'PROGRAMME COMPLETE') +
     '</button><button data-action="programme-tracker" aria-expanded="' + open + '" aria-label="' + (open ? 'Fold' : 'Unfold') + ' the objectives">' +
     (open ? '−' : '+') + '</button></div>' +
+    (open ? firstStepsMarkup(3) : '') +
     (open && stage ? '<ul>' + progress.map(o => '<li class="' + (o.done ? 'done' : '') + '"><i>' + (o.done ? '✓' : '') + '</i><span>' + o.text +
       '</span></li>').join('') + '</ul><button class="tracker-open" data-action="programme-open">' + (ready ? 'Ready to complete · open' : 'Open programme') + '</button>' : '');
 }
+/* First steps pay as soon as they are done (see FIRST_STEPS). */
+function checkFirstSteps() {
+  const paid = firstStepsCheck(game);
+  if (!paid.length) return;
+  for (const step of paid) toast('First step · ' + step.text + ' · +' + money(step.flux, 0));
+  sound('good'); trackerSignature = ''; programmeSignature = ''; saveGame();
+}
+/* The steps still to do, for the tracker and the programme panel. */
+function firstStepsMarkup(limit) {
+  const steps = firstStepsProgress(game);
+  if (!steps.length) return '';
+  return '<div class="first-steps"><span class="section-label">FIRST STEPS · ONCE PER PLANT</span><ul>' +
+    steps.slice(0, limit).map(s => '<li><i></i><span>' + s.text + (s.target > 1 ? ' <small>' + fmtCount(s.value) + '/' + fmtCount(s.target) + '</small>' : '') +
+      '</span><b>+' + money(s.flux, 0) + '</b></li>').join('') + '</ul></div>';
+}
+const fmtCount = n => Math.floor(n).toLocaleString('en-GB');
 function completeProgrammeStage() {
   const stage = completeStage(game);
   if (!stage) return;
@@ -5715,6 +5819,7 @@ function frame(ms) {
     updateResources(.10); updateMachine(); drawMarket(); renderTech(); updateBuild(); updateSwitcher(); updateLegacy(); updateDiscoveryButton();
     updateMaterials();
     if (!ventureCardShown && ventureStatus(game) === 'ready') showVentureResult();
+    checkFirstSteps();
     updateProgramme();
   }
   if (currentTime - lastSave > 10) saveGame();
